@@ -1,11 +1,14 @@
 package dev.gemmabcr
 
 import com.typesafe.config.ConfigFactory
+import dev.gemmabcr.api.PokemonApi
 import dev.gemmabcr.database.FlywayFactory
-import dev.gemmabcr.database.PokemonRepository
+import dev.gemmabcr.database.ExposedDao
 import dev.gemmabcr.database.DatabaseFactory
+import dev.gemmabcr.views.PageFactory
 import io.ktor.serialization.kotlinx.json.json
-import io.ktor.server.application.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import kotlinx.serialization.json.Json
 
@@ -28,7 +31,7 @@ fun Application.module() {
             }
         )
     }
-    val repo = PokemonRepository()
-
-    configureRouting(repo)
+    val pokeApi = PokemonApi()
+    val exposedDao = ExposedDao()
+    PageFactory(pokeApi, exposedDao).create(this)
 }
