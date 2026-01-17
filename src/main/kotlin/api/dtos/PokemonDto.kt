@@ -3,7 +3,8 @@ package dev.gemmabcr.api.dtos
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PokemonSpecies(
+data class PokemonDto(
+    val id: Int,
     val name: String,
-    val url: String
+    val types: List<PokemonTypeSlots>,
 )

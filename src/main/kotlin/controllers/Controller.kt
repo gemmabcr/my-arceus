@@ -17,14 +17,15 @@ class Controller(private val api: PokemonApi, private val dao: PokemonService) {
     private suspend fun maybeLoadPokemons() {
         if (::pokemonList.isInitialized.not()) {
             val todos: List<PokemonDto> = dao.list()
-            val entries: List<PokemonEntry> = api.entries()
+            val entries: List<PokemonEntry> = api.pokemons()
 
             pokemonList = todos.map { dto ->
                 val entry = entries.first { it.hisuiId == dto.id }
                 Pokemon(
                     dto.id,
-                    entry.id(),
-                    entry.name,
+                    entry.id,
+                    dto.name,
+                    entry.types,
                     dto.location,
                     dto.toDos
                 )

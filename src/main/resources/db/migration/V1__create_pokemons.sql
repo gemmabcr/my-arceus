@@ -1,6 +1,7 @@
 CREATE TABLE pokemons
 (
-    id        INTEGER NOT NULL,
+    id        INTEGER     NOT NULL,
+    name      VARCHAR(20) NOT NULL,
     locations INTEGER[] NOT NULL DEFAULT '{}',
     to_dos    INTEGER[] NOT NULL DEFAULT '{}',
     CONSTRAINT pk_pokemons PRIMARY KEY (id)

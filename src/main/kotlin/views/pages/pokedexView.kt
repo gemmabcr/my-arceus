@@ -5,6 +5,7 @@ import dev.gemmabcr.views.ui.pokemonImage
 import kotlinx.html.BODY
 import kotlinx.html.a
 import kotlinx.html.h1
+import kotlinx.html.img
 import kotlinx.html.table
 import kotlinx.html.tbody
 import kotlinx.html.td
@@ -19,6 +20,7 @@ fun BODY.pokedexView(pokemons: List<Pokemon>) {
             tr {
                 th { +"ID - name" }
                 th { +"aspect" }
+                th { +"type" }
                 th { +"Locations" }
                 th { +"To Dos" }
             }
@@ -33,6 +35,14 @@ fun BODY.pokedexView(pokemons: List<Pokemon>) {
                     }
                     td {
                         pokemonImage(pokemon.generalId)
+                    }
+                    td {
+                        pokemon.types.map {
+                            img(src = "/icons/${it.lowercase()}.svg") {
+                                height = "16"
+                                width = "16"
+                            }
+                        }
                     }
                     td { +"${pokemon.location}" }
                     td { +"${pokemon.toDos}" }

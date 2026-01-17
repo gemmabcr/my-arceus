@@ -18,6 +18,7 @@ class ExposedDao : PokemonService {
         val id = row[PokemonsTable.id]
         return PokemonDto(
             id = id,
+            name = row[PokemonsTable.name],
             location = row[PokemonsTable.locations],
             toDos = row[PokemonsTable.toDos]
         )

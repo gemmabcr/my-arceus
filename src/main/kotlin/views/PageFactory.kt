@@ -9,6 +9,7 @@ import dev.gemmabcr.views.ui.htmlLayout
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.html.respondHtml
+import io.ktor.server.http.content.staticResources
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
@@ -22,6 +23,7 @@ class PageFactory(
 
     fun create(application: Application) {
         application.routing {
+            staticResources("/icons", "icons")
             route("/") {
                 get {
                     val pokemons = controller.pokemons()
