@@ -5,5 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ToDoDto(
     val id: Int,
-    val goal: Int,
+    val description: String,
+    val goal: Int = 0,
 )

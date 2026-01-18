@@ -5,6 +5,7 @@ import dev.gemmabcr.api.PokemonEntry
 import dev.gemmabcr.database.dtos.PokemonDto
 import dev.gemmabcr.models.PokemonService
 import dev.gemmabcr.models.Pokemon
+import dev.gemmabcr.models.ToDo
 
 class Controller(private val api: PokemonApi, private val dao: PokemonService) {
     private lateinit var pokemonList: List<Pokemon>
@@ -25,9 +26,9 @@ class Controller(private val api: PokemonApi, private val dao: PokemonService) {
                     dto.id,
                     entry.id,
                     dto.name,
-                    entry.types,
+                    dto.types,
                     dto.location,
-                    dto.toDos
+                    dto.toDos.map { toDo -> ToDo(toDo.description, toDo.goal) }
                 )
             }
         }

@@ -2,8 +2,8 @@ package dev.gemmabcr.database.tables
 
 import org.jetbrains.exposed.sql.Table
 
-object ToDosTable : Table("to_dos") {
+object TypesTable : Table("types") {
     val id = integer("id")
-    val description = varchar("description", 70)
+    val name = varchar("name", 20)
     override val primaryKey = PrimaryKey(id)
 }

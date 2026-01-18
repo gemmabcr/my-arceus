@@ -1,4 +1,4 @@
-INSERT INTO toDos (id, description)
+INSERT INTO to_dos (id, description)
 VALUES (0, 'Ejemplares alfa capturados'),
        (1, 'Ejemplares avistados saliendo de árboles'),
        (2, 'Ejemplares avistados saliendo de rocas agrietadas'),
