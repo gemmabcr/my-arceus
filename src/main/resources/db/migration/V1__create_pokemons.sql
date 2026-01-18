@@ -4,7 +4,7 @@ CREATE TABLE pokemons
     name      VARCHAR(20) NOT NULL,
     types     INTEGER[] NOT NULL DEFAULT '{}',
     locations INTEGER[] NOT NULL DEFAULT '{}',
-    to_dos    INTEGER[] NOT NULL DEFAULT '{}',
+    to_dos    JSONB       NOT NULL DEFAULT '{}',
     CONSTRAINT pk_pokemons PRIMARY KEY (id)
 );
 

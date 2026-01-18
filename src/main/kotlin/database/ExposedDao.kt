@@ -40,13 +40,19 @@ class ExposedDao : PokemonService {
             ) }
     }
 
-    private suspend fun toDtos(ids: List<Int>): List<ToDoDto> = DatabaseFactory.dbQuery {
+    private suspend fun toDtos(toDosMap: Map<String, Int>): List<ToDoDto> = DatabaseFactory.dbQuery {
+        val ids = toDosMap.keys.map { it.toInt() }
+        if (ids.isEmpty()) return@dbQuery emptyList()
         ToDosTable.selectAll()
             .where(ToDosTable.id inList ids)
-            .map { row -> ToDoDto(
-                row[ToDosTable.id],
-                row[ToDosTable.description],
-            ) }
+            .map { row ->
+                val id = row[ToDosTable.id]
+                ToDoDto(
+                    id = id,
+                    description = row[ToDosTable.description],
+                    goal = toDosMap[id.toString()] ?: 0
+                )
+            }
     }
 
     override suspend fun get(id: Int): PokemonDto = DatabaseFactory.dbQuery {

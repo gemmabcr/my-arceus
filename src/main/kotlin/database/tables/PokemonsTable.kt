@@ -3,6 +3,8 @@ package dev.gemmabcr.database.tables
 import dev.gemmabcr.models.Type
 import org.jetbrains.exposed.sql.EnumerationColumnType
 import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.json.jsonb
+import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.IntegerColumnType
 
 object PokemonsTable : Table("pokemons") {
@@ -10,6 +12,6 @@ object PokemonsTable : Table("pokemons") {
     val name = varchar("name", 20)
     val locations = array("locations", IntegerColumnType())
     val types = array("types", EnumerationColumnType(Type::class))
-    val toDos = array("to_dos", IntegerColumnType())
+    val toDos = jsonb<Map<String, Int>>("to_dos", Json.Default)
     override val primaryKey = PrimaryKey(id)
 }
