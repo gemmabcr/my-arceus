@@ -38,18 +38,16 @@ class PokemonApi {
                         val response = client.get(it.pokemon_species.url).body<EntryDto>()
                         it.entry_number to response
                     }
+                    pokemonList = pokedex.pokemon_entries.map { entry ->
+                        require(entries.containsKey(entry.entry_number)) { "entries not contain ${entry.pokemon_species.name}" }
+                        PokemonEntry(
+                            entry.entry_number,
+                            entry.pokemon_species.name,
+                            entries[entry.entry_number]!!.id,
+                        )
+                    }
                 } catch (e: Exception) {
                     e.printStackTrace()
-                }
-            }
-            if (::pokemonList.isInitialized.not()) {
-                pokemonList = pokedex.pokemon_entries.map { entry ->
-                    require(entries.containsKey(entry.entry_number)) { "entries not contain ${entry.pokemon_species.name}" }
-                    PokemonEntry(
-                        entry.entry_number,
-                        entry.pokemon_species.name,
-                        entries[entry.entry_number]!!.id,
-                    )
                 }
             }
         }

@@ -26,6 +26,7 @@ fun HTML.htmlLayout(block: BODY.() -> Unit) {
         }
     }
     body {
+        style = "max-width: 800px; margin-left: auto; margin-right: auto;"
         block()
     }
 }
