@@ -3,6 +3,7 @@ package dev.gemmabcr.controllers
 import dev.gemmabcr.api.PokemonApi
 import dev.gemmabcr.api.PokemonEntry
 import dev.gemmabcr.database.dtos.PokemonDto
+import dev.gemmabcr.models.Location
 import dev.gemmabcr.models.PokemonService
 import dev.gemmabcr.models.Pokemon
 import dev.gemmabcr.models.ToDo
@@ -27,7 +28,7 @@ class Controller(private val api: PokemonApi, private val dao: PokemonService) {
                     entry.id,
                     dto.name,
                     dto.types,
-                    dto.location,
+                    dto.location.map { Location(it.id, it.name, it.area) },
                     dto.toDos.map { toDo -> ToDo(toDo.description, toDo.goal) }
                 )
             }

@@ -2,8 +2,10 @@ package dev.gemmabcr.database
 
 import dev.gemmabcr.database.dtos.PokemonDto
 import dev.gemmabcr.database.dtos.ToDoDto
+import dev.gemmabcr.database.dtos.database.dtos.LocationDto
 import dev.gemmabcr.database.tables.PokemonsTable
 import dev.gemmabcr.database.tables.ToDosTable
+import dev.gemmabcr.database.tables.database.tables.LocationsTable
 import dev.gemmabcr.models.PokemonService
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -23,9 +25,19 @@ class ExposedDao : PokemonService {
             id = id,
             name = row[PokemonsTable.name],
             types = row[PokemonsTable.types],
-            location = row[PokemonsTable.locations],
+            location = locations(row[PokemonsTable.locations]),
             toDos = toDtos(row[PokemonsTable.toDos])
         )
+    }
+
+    private suspend fun locations(ids: List<Int>): List<LocationDto> = DatabaseFactory.dbQuery {
+        LocationsTable.selectAll()
+            .where(LocationsTable.id inList ids)
+            .map { row -> LocationDto(
+                row[LocationsTable.id],
+                row[LocationsTable.name],
+                row[LocationsTable.area],
+            ) }
     }
 
     private suspend fun toDtos(ids: List<Int>): List<ToDoDto> = DatabaseFactory.dbQuery {

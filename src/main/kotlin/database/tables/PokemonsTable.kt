@@ -1,6 +1,6 @@
 package dev.gemmabcr.database.tables
 
-import dev.gemmabcr.models.models.Type
+import dev.gemmabcr.models.Type
 import org.jetbrains.exposed.sql.EnumerationColumnType
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.IntegerColumnType

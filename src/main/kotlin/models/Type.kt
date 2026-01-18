@@ -1,4 +1,4 @@
-package dev.gemmabcr.models.models
+package dev.gemmabcr.models
 
 enum class Type(
     val text: String,

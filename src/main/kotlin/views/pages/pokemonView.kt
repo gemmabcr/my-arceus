@@ -12,7 +12,7 @@ fun BODY.pokemonView(pokemon: Pokemon) {
     h1 { +"HISUI Pokemon List" }
     h2 { +"${pokemon.hisuiId} - ${pokemon.name}" }
     pokemonImage(pokemon.generalId)
-    p { +"locations:  ${pokemon.location}" }
+    p { +"locations:  ${pokemon.location.joinToString(" ,") { it.name }}" }
     p { +"to dos:  ${pokemon.toDos}" }
     a(href = "/") {
         +"< Atrás"
