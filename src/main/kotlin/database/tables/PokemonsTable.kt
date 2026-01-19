@@ -1,6 +1,7 @@
 package dev.gemmabcr.database.tables
 
 import dev.gemmabcr.models.Type
+import dev.gemmabcr.models.SpecialCondition
 import org.jetbrains.exposed.sql.EnumerationColumnType
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.json.jsonb
@@ -13,5 +14,6 @@ object PokemonsTable : Table("pokemons") {
     val locations = array("locations", IntegerColumnType())
     val types = array("types", EnumerationColumnType(Type::class))
     val toDos = jsonb<Map<String, Int>>("to_dos", Json.Default)
+    val specialCondition = enumeration<SpecialCondition>("special_condition").nullable()
     override val primaryKey = PrimaryKey(id)
 }

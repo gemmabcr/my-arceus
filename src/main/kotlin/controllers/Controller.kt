@@ -29,7 +29,8 @@ class Controller(private val api: PokemonApi, private val dao: PokemonService) {
                     dto.name,
                     dto.types,
                     dto.location.map { Location(it.id, it.name, it.area) },
-                    dto.toDos.map { toDo -> ToDo(toDo.description, toDo.goal) }
+                    dto.toDos.map { toDo -> ToDo(toDo.description, toDo.goal) },
+                    dto.specialCondition
                 )
             }
         }

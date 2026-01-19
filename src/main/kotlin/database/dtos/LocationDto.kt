@@ -1,4 +1,4 @@
-package dev.gemmabcr.database.dtos.database.dtos
+package dev.gemmabcr.database.dtos
 
 import dev.gemmabcr.models.Area
 import kotlinx.serialization.Serializable

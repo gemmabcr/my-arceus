@@ -1,4 +1,4 @@
-package dev.gemmabcr.database.tables.database.tables
+package dev.gemmabcr.database.tables
 
 import dev.gemmabcr.models.Area
 import org.jetbrains.exposed.sql.Table

@@ -3,6 +3,7 @@ package dev.gemmabcr.views.pages
 import dev.gemmabcr.models.Area
 import dev.gemmabcr.models.Location
 import dev.gemmabcr.models.Pokemon
+import dev.gemmabcr.models.SpecialCondition
 import dev.gemmabcr.views.components.toDos
 import dev.gemmabcr.views.ui.buttonLink
 import dev.gemmabcr.views.ui.card
@@ -12,16 +13,19 @@ import dev.gemmabcr.views.ui.h3
 import dev.gemmabcr.views.ui.h4
 import dev.gemmabcr.views.ui.h5
 import dev.gemmabcr.views.ui.pokemonImage
+import dev.gemmabcr.views.ui.row
 import dev.gemmabcr.views.ui.typeChips
-import kotlinx.html.BODY
+import kotlinx.html.DIV
 import kotlinx.html.div
 import kotlinx.html.p
 import kotlinx.html.style
 
-fun BODY.pokemonView(pokemon: Pokemon) {
+fun DIV.pokemonView(pokemon: Pokemon) {
     h1("Pokédex tracking list - Hisui")
     h2("Pokémon detail")
-    buttonLink("/", "< Atrás")
+    row {
+        buttonLink("/", "< Atrás")
+    }
     card {
         div {
             style = "display: grid; grid-template-columns: 240px 1fr;"
@@ -46,17 +50,30 @@ fun BODY.pokemonView(pokemon: Pokemon) {
                             style =
                                 "align-items: center; border: 1px solid #D8D2AB; border-radius: 1rem; display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem;"
                             h5(it.key.text, margin = false)
-                            it.value.map { location ->
-                                p {
-                                    style = "margin: 0px;"
-                                    +location.name
+                            if (it.key != Area.DISTORTION) {
+                                it.value.forEach { location ->
+                                    p {
+                                        style = "margin: 0px;"
+                                        +location.name
+                                    }
                                 }
                             }
                         }
                     }
                 }
+                maybeCreateSpecialCondition(pokemon.specialCondition)
             }
         }
         toDos(pokemon.toDos)
+    }
+}
+
+private fun DIV.maybeCreateSpecialCondition(specialCondition: SpecialCondition?) {
+    if (specialCondition == null) {
+        return
+    }
+    h4("Condiciones especiales", margin = false)
+    p {
+        +specialCondition.text
     }
 }

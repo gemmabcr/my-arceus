@@ -1,11 +1,11 @@
 package dev.gemmabcr.database
 
+import dev.gemmabcr.database.dtos.LocationDto
 import dev.gemmabcr.database.dtos.PokemonDto
 import dev.gemmabcr.database.dtos.ToDoDto
-import dev.gemmabcr.database.dtos.database.dtos.LocationDto
+import dev.gemmabcr.database.tables.LocationsTable
 import dev.gemmabcr.database.tables.PokemonsTable
 import dev.gemmabcr.database.tables.ToDosTable
-import dev.gemmabcr.database.tables.database.tables.LocationsTable
 import dev.gemmabcr.models.PokemonService
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -26,18 +26,21 @@ class ExposedDao : PokemonService {
             name = row[PokemonsTable.name],
             types = row[PokemonsTable.types],
             location = locations(row[PokemonsTable.locations]),
-            toDos = toDtos(row[PokemonsTable.toDos])
+            toDos = toDtos(row[PokemonsTable.toDos]),
+            specialCondition = row[PokemonsTable.specialCondition],
         )
     }
 
     private suspend fun locations(ids: List<Int>): List<LocationDto> = DatabaseFactory.dbQuery {
         LocationsTable.selectAll()
             .where(LocationsTable.id inList ids)
-            .map { row -> LocationDto(
-                row[LocationsTable.id],
-                row[LocationsTable.name],
-                row[LocationsTable.area],
-            ) }
+            .map { row ->
+                LocationDto(
+                    row[LocationsTable.id],
+                    row[LocationsTable.name],
+                    row[LocationsTable.area],
+                )
+            }
     }
 
     private suspend fun toDtos(toDosMap: Map<String, Int>): List<ToDoDto> = DatabaseFactory.dbQuery {

@@ -11,12 +11,12 @@ import dev.gemmabcr.views.ui.input
 import dev.gemmabcr.views.ui.pokemonImage
 import dev.gemmabcr.views.ui.row
 import dev.gemmabcr.views.ui.typeChips
-import kotlinx.html.BODY
+import kotlinx.html.DIV
 import kotlinx.html.InputType
 import kotlinx.html.div
 import kotlinx.html.style
 
-fun BODY.pokedexView(pokemons: List<Pokemon>) {
+fun DIV.pokedexView(pokemons: List<Pokemon>) {
     h1("Pokédex tracking list")
     h2("Pokémons de Hisui")
     div {
