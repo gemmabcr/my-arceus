@@ -1,0 +1,14 @@
+#!/bin/sh
+echo "🔍 Executant build i tests amb Gradle..."
+
+./gradlew build
+
+STATUS=$?
+
+if [ $STATUS -ne 0 ]; then
+  echo "❌ Build o tests han fallat. Commit cancel·lat."
+  exit 1
+fi
+
+echo "✅ Tot correcte. Continuant amb el commit."
+exit 0

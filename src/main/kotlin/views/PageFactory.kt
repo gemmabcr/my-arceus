@@ -3,13 +3,15 @@ package dev.gemmabcr.views
 import dev.gemmabcr.api.PokemonApi
 import dev.gemmabcr.controllers.Controller
 import dev.gemmabcr.models.PokemonService
-import dev.gemmabcr.views.pages.pokedexView
-import dev.gemmabcr.views.pages.pokemonView
+import dev.gemmabcr.views.pages.listView
+import dev.gemmabcr.views.pages.detailView
 import dev.gemmabcr.views.ui.htmlLayout
+import io.ktor.http.Parameters
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.html.respondHtml
 import io.ktor.server.http.content.staticResources
+import io.ktor.server.response.respondRedirect
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
@@ -26,10 +28,17 @@ class PageFactory(
             staticResources("/icons", "icons")
             route("/") {
                 get {
-                    val pokemons = controller.pokemons()
+                    call.respondRedirect("pokemons")
+                }
+            }
+            route("/pokemons") {
+                get {
+                    val parameters: Parameters = call.request.queryParameters
+                    val criteria = QueryCriteriaBuilder().with(parameters).build()
+                    val pokemons = controller.pokemons(criteria)
                     call.respondHtml {
                         htmlLayout {
-                            pokedexView(pokemons)
+                            listView(criteria, pokemons)
                         }
                     }
                 }
@@ -38,7 +47,7 @@ class PageFactory(
                     val pokemon = controller.pokemon(id)
                     call.respondHtml {
                         htmlLayout {
-                            pokemonView(pokemon)
+                            detailView(pokemon)
                         }
                     }
                 }

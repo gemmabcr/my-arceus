@@ -6,6 +6,7 @@ import kotlinx.html.body
 import kotlinx.html.div
 import kotlinx.html.head
 import kotlinx.html.img
+import kotlinx.html.link
 import kotlinx.html.style
 import kotlinx.html.title
 import kotlinx.html.unsafe
@@ -13,6 +14,7 @@ import kotlinx.html.unsafe
 fun HTML.htmlLayout(block: DIV.() -> Unit) {
     head {
         title { +"My Arceus Pokedex" }
+        link(rel = "icon", href = "/static/favicon.ico", type = "image/x-icon")
         style {
             unsafe {
                 raw(

@@ -6,14 +6,18 @@ import dev.gemmabcr.database.dtos.PokemonDto
 import dev.gemmabcr.models.Location
 import dev.gemmabcr.models.PokemonService
 import dev.gemmabcr.models.Pokemon
+import dev.gemmabcr.models.QueryCriteria
 import dev.gemmabcr.models.ToDo
 
 class Controller(private val api: PokemonApi, private val dao: PokemonService) {
     private lateinit var pokemonList: List<Pokemon>
 
-    suspend fun pokemons(): List<Pokemon> {
+    suspend fun pokemons(criteria: QueryCriteria): List<Pokemon> {
         maybeLoadPokemons()
-        return pokemonList
+        if (criteria.isFiltered().not()) {
+            return pokemonList
+        }
+        return pokemonList.filter { pokemon -> pokemon.match(criteria) }
     }
 
     private suspend fun maybeLoadPokemons() {

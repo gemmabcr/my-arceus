@@ -20,7 +20,7 @@ import kotlinx.html.div
 import kotlinx.html.p
 import kotlinx.html.style
 
-fun DIV.pokemonView(pokemon: Pokemon) {
+fun DIV.detailView(pokemon: Pokemon) {
     h1("Pokédex tracking list - Hisui")
     h2("Pokémon detail")
     row {

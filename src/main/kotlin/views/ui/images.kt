@@ -14,7 +14,7 @@ fun FlowContent.pokemonImage(id: Int) {
 fun FlowContent.typeChips(types: List<Pair<String, String>>) {
     div {
         style = "display: flex;"
-        types.map {
+        types.forEach {
             div {
                 style =
                     "display: flex; justify-content: center; background-color: #3d3d3d; border-radius: 0.25rem; color: #fff; margin-right: 0.5rem; padding: 0.25rem 0.5rem;"
