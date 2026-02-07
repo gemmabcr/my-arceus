@@ -1,9 +1,10 @@
 package dev.gemmabcr.views
 
 enum class QueryCriteriaType {
+    AREA,
     NAME,
     NUMBER,
-    AREA;
+    PAGE;
 
     fun key(): String = this.name.lowercase()
 }

@@ -11,7 +11,7 @@ import dev.gemmabcr.views.ui.h1
 import dev.gemmabcr.views.ui.h2
 import dev.gemmabcr.views.ui.h3
 import dev.gemmabcr.views.ui.form
-import dev.gemmabcr.views.ui.button
+import dev.gemmabcr.views.ui.button as uiButton
 import dev.gemmabcr.views.ui.numberInput
 import dev.gemmabcr.views.ui.textInput
 import dev.gemmabcr.views.ui.pokemonImage
@@ -19,12 +19,14 @@ import dev.gemmabcr.views.ui.row
 import dev.gemmabcr.views.ui.typeChips
 import kotlinx.html.DIV
 import kotlinx.html.InputType
+import kotlinx.html.button
 import kotlinx.html.div
 import kotlinx.html.id
 import kotlinx.html.img
 import kotlinx.html.input
 import kotlinx.html.label
 import kotlinx.html.onChange
+import kotlinx.html.onClick
 import kotlinx.html.onSubmit
 import kotlinx.html.p
 import kotlinx.html.style
@@ -35,7 +37,12 @@ fun DIV.listView(criteria: QueryCriteria, pokemons: List<Pokemon>) {
     div {
         style = "display: flex; flex-direction: column; gap: 2rem; width: 100%;"
         form {
+            id = "filter-form"
             onSubmit = "Array.from(this.elements).forEach(e=>{if(e.name&&!e.value)e.disabled=true})"
+            input(type = InputType.hidden, name = QueryCriteriaType.PAGE.key()) {
+                id = "page-input"
+                value = criteria.pagination.page.toString()
+            }
             div {
                 style = "display: flex; gap: 0.5rem; flex-wrap: wrap;"
                 Area.entries.forEach { area ->
@@ -63,10 +70,10 @@ fun DIV.listView(criteria: QueryCriteria, pokemons: List<Pokemon>) {
                     QueryCriteriaType.NUMBER.key(),
                     criteria.number?.toString()
                 )
-                button("Filter")
+                uiButton("Filter")
             }
         }
-        if (pokemons.isEmpty().not()) {
+        if (pokemons.isEmpty()) {
             row("justify-content: center") {
                 p { +"No pokemons found" }
                 img(src = "/icons/not_found.png") {
@@ -92,6 +99,26 @@ fun DIV.listView(criteria: QueryCriteria, pokemons: List<Pokemon>) {
                     }
                     toDos(pokemon.toDos)
                 }
+            }
+        }
+    }
+    row("justify-content: center; margin-top: 2rem; gap: 1rem;") {
+        if (criteria.pagination.page > 1) {
+            button(type = kotlinx.html.ButtonType.button) {
+                style =
+                    "background-color: #D8D2AB; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-weight: bold; color: #4A4A4A;"
+                onClick =
+                    "document.getElementById('page-input').value = '${criteria.pagination.page - 1}'; document.getElementById('filter-form').submit()"
+                +"Previous"
+            }
+        }
+        if (pokemons.size == criteria.pagination.pageSize) {
+            button(type = kotlinx.html.ButtonType.button) {
+                style =
+                    "background-color: #D8D2AB; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-weight: bold; color: #4A4A4A;"
+                onClick =
+                    "document.getElementById('page-input').value = '${criteria.pagination.page + 1}'; document.getElementById('filter-form').submit()"
+                +"Next"
             }
         }
     }

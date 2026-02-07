@@ -6,13 +6,13 @@ import kotlinx.html.style
 
 fun FlowContent.pokemonImage(id: Int) {
     img(src = url(id)) {
-        style = "background: #fff; border-radius: 50%;"
+        style = "background: #fff; border-radius: 50%; height: 120px; width: 120px;"
     }
 }
 
 private fun url(generalId: Int): String {
     val base = "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/"
-    val number = "%03d".format(generalId.toString())
+    val number = generalId.toString().padStart(3, '0')
     return "$base$number${maybeIsHisui(generalId)}.png"
 }
 

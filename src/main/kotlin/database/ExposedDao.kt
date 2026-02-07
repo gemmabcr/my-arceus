@@ -28,6 +28,8 @@ class ExposedDao : PokemonService {
         PokemonsTable.selectAll()
             .orderBy(PokemonsTable.id)
             .filter { row -> filter(row, criteria, filterLocationIds) }
+            .drop(criteria.pagination.offset.toInt())
+            .take(criteria.pagination.pageSize)
             .map { pokemonDto(it) }
     }
 
@@ -66,6 +68,7 @@ class ExposedDao : PokemonService {
     )
 
     private suspend fun locations(ids: List<Int>): List<LocationDto> = DatabaseFactory.dbQuery {
+        if (ids.isEmpty()) return@dbQuery emptyList()
         LocationsTable.selectAll()
             .where(LocationsTable.id inList ids)
             .map { row ->

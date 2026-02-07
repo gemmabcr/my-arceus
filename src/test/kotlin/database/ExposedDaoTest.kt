@@ -4,6 +4,7 @@ import dev.gemmabcr.database.ExposedDao
 import dev.gemmabcr.database.tables.LocationsTable
 import dev.gemmabcr.database.tables.PokemonsTable
 import dev.gemmabcr.models.Area
+import dev.gemmabcr.models.Pagination
 import dev.gemmabcr.models.QueryCriteria
 import dev.gemmabcr.models.Type
 import kotlinx.coroutines.runBlocking
@@ -117,5 +118,47 @@ class ExposedDaoTest {
 
         assertEquals("Pikachu", result.name)
         assertEquals(id, result.id)
+    }
+
+    @Test
+    fun givenCriteriaWithPage_whenReadAll_thenReturnsRowsFromThatPage() = runBlocking {
+        // Insert more data to test pagination
+        transaction {
+            (101..105).forEach { i ->
+                PokemonsTable.insert {
+                    it[PokemonsTable.id] = i
+                    it[PokemonsTable.generalId] = i
+                    it[PokemonsTable.name] = "Pokemon $i"
+                    it[PokemonsTable.types] = listOf(Type.NORMAL)
+                    it[PokemonsTable.locations] = listOf()
+                    it[PokemonsTable.toDos] = mapOf()
+                }
+            }
+        }
+        
+        // existing 3 + 5 new = 8 total
+        // Test page 1, size 3 => should return 3 items (25, 74, 95) - ordered by ID
+        val pagination = Pagination(page = 1, pageSize = 3)
+        val criteriaPage1 = QueryCriteria(pagination = pagination)
+        val resultPage1 = dao.readAll(criteriaPage1)
+        
+        assertEquals(3, resultPage1.size, "Expected 3 items in page 1, but got ${resultPage1.size}")
+        assertEquals(25, resultPage1[0].id)
+        assertEquals(74, resultPage1[1].id)
+        assertEquals(95, resultPage1[2].id)
+
+        // Test page 2, size 3 => should return 3 items (101, 102, 103)
+        val pagination2 = Pagination(page = 2, pageSize = 3)
+        val criteriaPage2 = QueryCriteria(pagination = pagination2)
+        val resultPage2 = dao.readAll(criteriaPage2)
+        assertEquals(3, resultPage2.size)
+        assertEquals(101, resultPage2[0].id)
+
+        // Test page 3, size 3 => should return 2 items (104, 105)
+        val pagination3 = Pagination(page = 3, pageSize = 3)
+        val criteriaPage3 = QueryCriteria(pagination = pagination3)
+        val resultPage3 = dao.readAll(criteriaPage3)
+        assertEquals(2, resultPage3.size)
+        assertEquals(104, resultPage3[0].id)
     }
 }
