@@ -1,30 +1,25 @@
 package dev.gemmabcr.views.ui
 
 import kotlinx.html.FlowContent
-import kotlinx.html.div
 import kotlinx.html.img
 import kotlinx.html.style
 
 fun FlowContent.pokemonImage(id: Int) {
-    img(src = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/$id.png") {
+    img(src = url(id)) {
         style = "background: #fff; border-radius: 50%;"
     }
 }
 
-fun FlowContent.typeChips(types: List<Pair<String, String>>) {
-    div {
-        style = "display: flex;"
-        types.forEach {
-            div {
-                style =
-                    "display: flex; justify-content: center; background-color: #3d3d3d; border-radius: 0.25rem; color: #fff; margin-right: 0.5rem; padding: 0.25rem 0.5rem;"
-                img(src = "/icons/types/${it.first}.svg") {
-                    height = "16"
-                    width = "16"
-                    style = "background-color: #eee; border-radius: 0.25rem; margin-right: 0.5rem;"
-                }
-                +it.second
-            }
-        }
+private fun url(generalId: Int): String {
+    val base = "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/"
+    val number = "%03d".format(generalId.toString())
+    return "$base$number${maybeIsHisui(generalId)}.png"
+}
+
+private fun maybeIsHisui(generalId: Int): String {
+    val isHisui = setOf(58, 59, 100, 101, 157, 549, 570, 571, 628, 705, 706, 713, 724)
+    return when (isHisui.contains(generalId)) {
+        true -> "-Hisui"
+        false -> ""
     }
 }

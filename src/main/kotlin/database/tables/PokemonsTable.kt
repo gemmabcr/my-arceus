@@ -10,6 +10,7 @@ import org.jetbrains.exposed.sql.IntegerColumnType
 
 object PokemonsTable : Table("pokemons") {
     val id = integer("id")
+    val generalId = integer("general_id")
     val name = varchar("name", 20)
     val locations = array("locations", IntegerColumnType())
     val types = array("types", EnumerationColumnType(Type::class))

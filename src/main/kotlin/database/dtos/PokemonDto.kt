@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PokemonDto(
     val id: Int,
+    val generalId: Int,
     val name: String,
     val types: List<Type>,
     val location: List<LocationDto>,

@@ -28,6 +28,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+    testImplementation("com.h2database:h2:2.2.224")
 
     implementation("io.ktor:ktor-server-html-builder:$ktor_version")
 
