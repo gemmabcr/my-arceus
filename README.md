@@ -1,41 +1,84 @@
-# my-arceus
-Pokemon Arceus game tracker application
+# My Arceus Tracker
 
-This project was created using the [Ktor Project Generator](https://start.ktor.io).
-
-Here are some useful links to get you started:
-
-- [Ktor Documentation](https://ktor.io/docs/home.html)
-- [Ktor GitHub page](https://github.com/ktorio/ktor)
-- The [Ktor Slack chat](https://app.slack.com/client/T09229ZC6/C0A974TJ9). You'll need
-  to [request an invite](https://surveys.jetbrains.com/s3/kotlin-slack-sign-up) to join.
+A simple and interactive tracker for **Pokémon Legends: Arceus**. This application helps players keep track of their progress in the Hisui Pokedex, complete research tasks, and monitor location-based encounters.
 
 ## Features
 
-Here's a list of features included in this project:
+- **Hisui Pokedex**: View a comprehensive list of all Pokémon available in the Hisui region.
+- **Research Tasks (ToDos)**: Track specific research tasks for each Pokémon to complete their Pokedex entry.
+- **Advanced Filtering**: Filter the Pokémon list by:
+  - **Name**: Search for specific Pokémon.
+  - **Number**: Find Pokémon by their Hisui Pokedex number.
+  - **Area**: Filter by specific regions (e.g., Obsidian Fieldlands, Crimson Mirelands).
+- **Pagination**: Browse the Pokedex efficiently with a paginated list view.
+- **Responsive Design**: Clean and functional UI built with Kotlin HTML DSL.
 
-| Name                                               | Description                                                 |
-| ----------------------------------------------------|------------------------------------------------------------- |
-| [Routing](https://start.ktor.io/p/routing-default) | Allows to define structured routes and associated handlers. |
+## Tech Stack
 
-## Building & Running
+This project is built using modern Kotlin technologies:
 
-To build or run the project, use one of the following tasks:
+- **Language**: [Kotlin](https://kotlinlang.org/)
+- **Web Framework**: [Ktor](https://ktor.io/)
+- **Database Access**: [Exposed](https://github.com/JetBrains/Exposed) (ORM)
+- **Database**: [PostgreSQL](https://www.postgresql.org/) (Production) / [H2](https://www.h2database.com/html/main.html) (Testing)
+- **Frontend**: Server-Side Rendering with [Kotlin HTML DSL](https://github.com/Kotlin/kotlinx.html)
+- **Build Tool**: [Gradle](https://gradle.org/)
+- **AI Assistant**: [Antigravity](https://gemini.google.com/app/antigravity)
 
-| Task                                    | Description                                                          |
-| -----------------------------------------|---------------------------------------------------------------------- |
-| `./gradlew test`                        | Run the tests                                                        |
-| `./gradlew build`                       | Build everything                                                     |
-| `./gradlew buildFatJar`                 | Build an executable JAR of the server with all dependencies included |
-| `./gradlew buildImage`                  | Build the docker image to use with the fat JAR                       |
-| `./gradlew publishImageToLocalRegistry` | Publish the docker image locally                                     |
-| `./gradlew run`                         | Run the server                                                       |
-| `./gradlew runDocker`                   | Run using the local docker image                                     |
+## Getting Started
 
-If the server starts successfully, you'll see the following output:
+### Prerequisites
 
+- JDK 17 or higher
+- Docker (optional, for running with PostgreSQL)
+
+### Running the Application
+
+This project can be run using **[Docker Compose](https://docs.docker.com/compose)** (recommended) or locally.
+
+#### Option 1: Run with Docker Compose (recommended)
+
+The project includes a `docker-compose.yml` file that starts:
+- A PostgreSQL database
+- The application container
+
+First, build and start the containers:
+
+```bash
+docker-compose build
+docker-compose up
 ```
-2024-12-04 14:32:45.584 [main] INFO  Application - Application started in 0.303 seconds.
-2024-12-04 14:32:45.682 [main] INFO  Application - Responding at http://0.0.0.0:8080
+
+#### Option 2: Run locally without Docker
+
+If you prefer running the app locally, make sure you have a PostgreSQL instance running and properly configured.
+
+Then run:
+
+```bash
+./gradlew run
 ```
 
+The server will start at http://0.0.0.0:8080.
+
+### Running Tests
+
+To execute the unit and integration tests:
+
+```bash
+./gradlew test
+```
+
+## Project Structure
+
+- `src/main/kotlin`: Application source code.
+  - `models`: Data classes and domain logic.
+  - `database`: Database tables and DAO implementation.
+  - `views`: UI components and page templates (HTML DSL).
+  - `controllers`: Business logic handling.
+- `src/test/kotlin`: Unit and integration tests.
+
+## Resources
+
+- **Pokemon Icons**: [HybridShivam/Pokemon](https://github.com/HybridShivam/Pokemon)
+- **PokeAPI**: https://pokeapi.co/. External API to retrieve additional Pokémon data that is not stored locally, such as evolution chains.
