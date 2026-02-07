@@ -1,4 +1,4 @@
-package dev.gemmabcr.views.ui
+package dev.gemmabcr.views.pages.components
 
 import kotlinx.html.FlowContent
 import kotlinx.html.img
@@ -6,7 +6,7 @@ import kotlinx.html.style
 
 fun FlowContent.pokemonImage(id: Int) {
     img(src = url(id)) {
-        style = "background: #fff; border-radius: 50%; height: 120px; width: 120px;"
+        style = "height: 120px; width: 120px;"
     }
 }
 

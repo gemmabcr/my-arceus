@@ -8,7 +8,6 @@ import kotlinx.html.h4
 import kotlinx.html.h5
 import kotlinx.html.style
 
-private val COLOR = "#1A4A63"
 fun FlowContent.h1(value: String) {
     h1 {
         style = createStyle()
@@ -45,7 +44,7 @@ fun FlowContent.h5(value: String, margin: Boolean = true) {
 }
 
 private fun createStyle(margin: Boolean = true): String {
-    var style = "color: $COLOR;"
+    var style = "color: ${Colors.DARK_BLUE.hex};"
     if (margin.not()) {
         style += " margin: 0px;"
     }

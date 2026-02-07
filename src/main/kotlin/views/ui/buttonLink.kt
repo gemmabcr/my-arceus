@@ -1,14 +1,20 @@
 package dev.gemmabcr.views.ui
 
+import dev.gemmabcr.views.ui.borders.Border
+import dev.gemmabcr.views.ui.borders.BorderRadius
 import kotlinx.html.FlowContent
 import kotlinx.html.a
+import kotlinx.html.div
 import kotlinx.html.style
 
 fun FlowContent.buttonLink(href: String, label: String) {
-    a(href = href) {
-        style =
-            "border: 2px solid #3695bb; border-radius: 0.25rem; color: #1684b0; cursor: pointer; " +
-                    "font-weight: 600; justify-content: center; padding: 0.25rem 0.5rem;"
-        +label
+    div {
+        a(href = href) {
+            val color = Colors.BLUE
+            style =
+                "${Border(color, value = 2, radius = BorderRadius.MIN).text()}; color: ${color.hex}; cursor: pointer; " +
+                        "font-weight: 600; justify-content: center; padding: 0.25rem 0.5rem;"
+            +label
+        }
     }
 }
