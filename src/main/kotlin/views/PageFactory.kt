@@ -4,6 +4,7 @@ import dev.gemmabcr.controllers.Controller
 import dev.gemmabcr.models.PokemonService
 import dev.gemmabcr.views.pages.DetailView
 import dev.gemmabcr.views.pages.ListView
+import io.ktor.http.HttpHeaders
 import io.ktor.http.Parameters
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -37,6 +38,14 @@ class PageFactory(service: PokemonService) {
                     val id = call.parameters["id"]!!.toInt()
                     val pokemon = controller.pokemon(id)
                     call.respondHtmlTemplate(DetailView(pokemon)) {}
+                }
+            }
+            route("/lang/{locale}") {
+                get {
+                    val locale = call.parameters["locale"] ?: "en"
+                    call.response.cookies.append("lang", locale, path = "/")
+                    val referrer = call.request.headers[HttpHeaders.Referrer] ?: "/pokemons"
+                    call.respondRedirect(referrer)
                 }
             }
         }

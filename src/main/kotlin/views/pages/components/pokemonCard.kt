@@ -2,6 +2,8 @@ package dev.gemmabcr.views.pages.components
 
 import dev.gemmabcr.models.BasePokemon
 import dev.gemmabcr.models.ToDo
+import dev.gemmabcr.views.i18n.I18n
+import dev.gemmabcr.views.i18n.I18nKey
 import dev.gemmabcr.views.ui.Colors
 import dev.gemmabcr.views.ui.buttonLink
 import dev.gemmabcr.views.ui.flexs.AlignItems
@@ -54,20 +56,22 @@ fun FlowContent.pokemonCard(
 private fun FlowContent.toDos(items: List<ToDo>) {
     column(align = AlignItems.CENTER, style = "padding: 1rem;") {
         row(JustifyContent.CENTER, AlignItems.CENTER, Gap.MAX) {
-            h4("Tareas de la Pokédex", margin = false)
-            buttonLink("", "Editar")
+            h4(translate(I18nKey.TODOS), margin = false)
+            buttonLink("", translate(I18nKey.EDIT))
         }
-        h5("En progreso (0/${items.size})", margin = false)
+        h5("${translate(I18nKey.IN_PROGRESS)} (0/${items.size})", margin = false)
         table(
-            listOf("Progreso", "Descripción"),
+            listOf(I18nKey.PROGRESS, I18nKey.DESCRIPTION).map { translate(it) },
             items.map {
                 listOf(
-                    "0 of ${it.goal}",
+                    "0 ${translate(I18nKey.OF)} ${it.goal}",
                     it.description
                 )
             }
         )
     }
 }
+
+private fun translate(key: I18nKey): String = I18n.getMessage(key)
 
 private fun textStyle(): String = "display: flex; margin: 0; color: ${Colors.ON_DARK_BLUE};"

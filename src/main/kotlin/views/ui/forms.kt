@@ -12,11 +12,13 @@ import kotlinx.html.onMouseOut
 import kotlinx.html.onMouseOver
 import kotlinx.html.onSubmit
 import kotlinx.html.style
+import dev.gemmabcr.views.i18n.I18n
+import dev.gemmabcr.views.i18n.I18nKey
 
 fun DIV.form(
     action: String,
     method: FormMethod,
-    submitText: String,
+    submitText: String = I18n.getMessage(I18nKey.SUBMIT),
     id: String? = null,
     onSubmit: String? = null,
     block: DIV.() -> Unit
