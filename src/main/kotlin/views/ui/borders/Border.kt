@@ -8,7 +8,7 @@ data class Border(
     val type: String = "solid",
     val radius: BorderRadius? = null
 ) {
-    fun text(): String = "border: ${value}px $type ${color.hex};${maybeBorderRadius()}"
+    fun text(): String = "border: ${value}px $type $color;${maybeBorderRadius()}"
 
     private fun maybeBorderRadius(): String = when (radius) {
         null -> ""

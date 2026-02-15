@@ -1,6 +1,7 @@
 package dev.gemmabcr.views.ui
 
 import kotlinx.html.DIV
+import kotlinx.html.style
 import kotlinx.html.table
 import kotlinx.html.tbody
 import kotlinx.html.td
@@ -10,12 +11,11 @@ import kotlinx.html.tr
 fun DIV.table(headers: List<String>, rows: List<List<String>>) {
     table {
         tbody {
-            tr {
-                headers.map { th { +it } }
-            }
-            rows.map { row ->
+            tr { headers.forEach { th { +it } } }
+            rows.forEach { row ->
                 tr {
-                    row.map {
+                    style = "background-color: #fff"
+                    row.forEach {
                         td { +it }
                     }
                 }

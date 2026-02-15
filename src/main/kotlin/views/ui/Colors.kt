@@ -1,10 +1,12 @@
 package dev.gemmabcr.views.ui
 
-enum class Colors(val hex: String) {
-    BLUE("#3695bb"),
-    CREAM("#D8D2AB"),
+enum class Colors(private val hex: String) {
+    CREAM("#E6DBD0"),
     DARK_BLUE("#1A4A63"),
-    GREY("#3d3d3d"),
-    ON_GREY("#fbeeee")
+    ON_DARK_BLUE("#EFF7FB"),
+    DARKEST_BLUE("#0D2430"),
+    LIGHT_GREY("#F4F3EE"),
     ;
+
+    override fun toString(): String = hex
 }

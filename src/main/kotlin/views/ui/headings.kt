@@ -22,16 +22,16 @@ fun FlowContent.h2(value: String) {
     }
 }
 
-fun FlowContent.h3(value: String, margin: Boolean = true) {
+fun FlowContent.h3(value: String, margin: Boolean = true, color: Colors) {
     h3 {
-        style = createStyle(margin)
+        style = createStyle(margin, color)
         +value
     }
 }
 
-fun FlowContent.h4(value: String, margin: Boolean = true) {
+fun FlowContent.h4(value: String, margin: Boolean = true, color: Colors = Colors.DARK_BLUE) {
     h4 {
-        style = createStyle(margin)
+        style = createStyle(margin, color)
         +value
     }
 }
@@ -43,8 +43,8 @@ fun FlowContent.h5(value: String, margin: Boolean = true) {
     }
 }
 
-private fun createStyle(margin: Boolean = true): String {
-    var style = "color: ${Colors.DARK_BLUE.hex};"
+private fun createStyle(margin: Boolean = true, color: Colors = Colors.DARK_BLUE): String {
+    var style = "color: $color;"
     if (margin.not()) {
         style += " margin: 0px;"
     }
