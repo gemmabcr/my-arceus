@@ -1,0 +1,43 @@
+@startuml
+class Pokemon {
++ hisuiId: Int
++ generalId: Int
++ name: String
++ types: List<Type>
++ location: List<Location>
++ toDos: List<ToDo>
++ specialCondition: SpecialCondition [optional]
++ evolution: List<EvolutionChain>
+}
+
+class Location {
++ id: Int
++ name: String
++ area: Area
+}
+
+class ToDo {
++ description: String
++ goal: Int
+}
+
+interface EvolutionChain {
++ name: String
++ detail: EvolutionChainDetail
+}
+interface EvolutionChainDetail
+
+class EvolvesFrom
+class EvolvesTo
+
+class LevelUpEvolutionDetail
+
+Pokemon o--> "1..*" ToDo
+Pokemon o--> "1..*" Location
+Pokemon o--> "1..*" Type
+
+EvolvesFrom ..|> EvolutionChain
+EvolvesTo ..|> EvolutionChain
+
+LevelUpEvolutionDetail ..|> EvolutionChainDetail
+@enduml

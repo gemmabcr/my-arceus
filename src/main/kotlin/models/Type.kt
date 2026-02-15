@@ -1,7 +1,7 @@
 package dev.gemmabcr.models
 
 enum class Type(
-    val text: String,
+    private val text: String,
 ) {
     BUG("Bicho"),
     DARK("Siniestro"),
@@ -20,5 +20,7 @@ enum class Type(
     PSYCHIC("Psíquico"),
     ROCK("Roca"),
     STEEL("Acero"),
-    WATER("Agua"),
+    WATER("Agua");
+
+    override fun toString(): String = text
 }

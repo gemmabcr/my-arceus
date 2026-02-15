@@ -1,8 +1,8 @@
 package dev.gemmabcr.views.pages
 
 import dev.gemmabcr.models.Area
+import dev.gemmabcr.models.DetailedPokemon
 import dev.gemmabcr.models.Location
-import dev.gemmabcr.models.Pokemon
 import dev.gemmabcr.models.SpecialCondition
 import dev.gemmabcr.views.ui.Colors
 import dev.gemmabcr.views.ui.buttonLink
@@ -19,7 +19,7 @@ import kotlinx.html.FlowContent
 import kotlinx.html.p
 import kotlinx.html.style
 
-class DetailView(pokemon: Pokemon) : HtmlLayout("Pokémon detail", {
+class DetailView(pokemon: DetailedPokemon) : HtmlLayout("Pokémon detail", {
     column(gap = Gap.MAX) {
         buttonLink("/", "< Atrás")
         pokemonCard(pokemon) {
@@ -54,7 +54,7 @@ private fun FlowContent.maybeCreateSpecialCondition(specialCondition: SpecialCon
     column(style = "padding: 1rem; border-top: 1px solid ${Colors.DARK_BLUE}") {
         h4("Condiciones especiales", margin = false)
         p {
-            +specialCondition.text
+            +specialCondition.toString()
         }
     }
 }

@@ -1,6 +1,5 @@
 package dev.gemmabcr.views
 
-import dev.gemmabcr.api.PokemonApi
 import dev.gemmabcr.controllers.Controller
 import dev.gemmabcr.models.PokemonService
 import dev.gemmabcr.views.pages.DetailView
@@ -16,11 +15,8 @@ import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import kotlin.text.toInt
 
-class PageFactory(
-    api: PokemonApi,
-    service: PokemonService
-) {
-    private val controller = Controller(api, service)
+class PageFactory(service: PokemonService) {
+    private val controller = Controller(service)
 
     fun create(application: Application) {
         application.routing {

@@ -82,4 +82,3 @@ To execute the unit and integration tests:
 
 - **Pokémon Icons**: [HybridShivam/Pokemon](https://github.com/HybridShivam/Pokemon)
 - **Pokémon type Icons**: [partywhale/pokemon-type-icons](https://github.com/partywhale/pokemon-type-icons)
-- **PokeAPI**: https://pokeapi.co/. External API to retrieve additional Pokémon data that is not stored locally, such as evolution chains.

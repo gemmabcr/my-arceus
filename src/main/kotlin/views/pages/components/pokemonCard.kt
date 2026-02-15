@@ -1,6 +1,6 @@
 package dev.gemmabcr.views.pages.components
 
-import dev.gemmabcr.models.Pokemon
+import dev.gemmabcr.models.BasePokemon
 import dev.gemmabcr.models.ToDo
 import dev.gemmabcr.views.ui.Colors
 import dev.gemmabcr.views.ui.buttonLink
@@ -20,7 +20,7 @@ import kotlinx.html.h4
 import kotlinx.html.style
 
 fun FlowContent.pokemonCard(
-    pokemon: Pokemon,
+    pokemon: BasePokemon,
     block: (FlowContent.() -> Unit)? = null,
 ) {
     column {
@@ -39,7 +39,7 @@ fun FlowContent.pokemonCard(
                 +pokemon.name
             }
             row { style = "width: 100%;" }
-            typeChips(pokemon.types.map { it.name.lowercase() to it.text })
+            typeChips(pokemon.types.map { it.name.lowercase() to it.toString() })
         }
         grid("240px 1fr") {
             column(JustifyContent.CENTER, AlignItems.CENTER, style = "padding: 1rem") {

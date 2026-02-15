@@ -1,7 +1,6 @@
 package dev.gemmabcr
 
 import com.typesafe.config.ConfigFactory
-import dev.gemmabcr.api.PokemonApi
 import dev.gemmabcr.database.FlywayFactory
 import dev.gemmabcr.database.ExposedDao
 import dev.gemmabcr.database.DatabaseFactory
@@ -31,7 +30,6 @@ fun Application.module() {
             }
         )
     }
-    val pokeApi = PokemonApi()
     val exposedDao = ExposedDao()
-    PageFactory(pokeApi, exposedDao).create(this)
+    PageFactory(exposedDao).create(this)
 }
