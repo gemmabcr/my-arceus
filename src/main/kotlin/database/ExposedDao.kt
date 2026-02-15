@@ -38,24 +38,24 @@ class ExposedDao : PokemonService {
         criteria: QueryCriteria,
         filterLocationIds: List<Int>?
     ): Boolean = when (criteria.isFiltered()) {
-        true -> matchNumber(row, criteria.number) || matchName(row, criteria.name) || matchArea(row, filterLocationIds)
+        true -> matchNumber(row, criteria.number) && matchName(row, criteria.name) && matchArea(row, filterLocationIds)
         false -> true
     }
 
     private fun matchNumber(
         row: ResultRow,
         number: Int?,
-    ): Boolean = number != null && row[PokemonsTable.id] == number
+    ): Boolean = number == null || row[PokemonsTable.id] == number
 
     private fun matchName(
         row: ResultRow,
         name: String?,
-    ): Boolean = name != null && row[PokemonsTable.name].lowercase().contains(name.lowercase())
+    ): Boolean = name == null || row[PokemonsTable.name].lowercase().contains(name.lowercase())
 
     private fun matchArea(
         row: ResultRow,
         filterLocationIds: List<Int>?,
-    ): Boolean = filterLocationIds != null && row[PokemonsTable.locations].any { it in filterLocationIds }
+    ): Boolean = filterLocationIds == null || row[PokemonsTable.locations].any { it in filterLocationIds }
 
     private suspend fun pokemonDto(row: ResultRow): PokemonDto = PokemonDto(
         id = row[PokemonsTable.id],

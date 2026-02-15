@@ -25,39 +25,48 @@ import kotlinx.html.id
 import kotlinx.html.img
 import kotlinx.html.input
 import kotlinx.html.onClick
-import kotlinx.html.onSubmit
 import kotlinx.html.p
 import kotlinx.html.style
 
 class ListView(criteria: QueryCriteria, pokemons: List<Pokemon>) : HtmlLayout("Pokémons de Hisui", {
     column(gap = Gap.MAX) {
-        form("/pokemons", FormMethod.get, "Filter") {
-            id = "filter-form"
+        val autoSubmit =
+            "document.getElementById('page-input').value='1'; Array.from(this.form.elements).forEach(e=>{if(e.name&&!e.value)e.disabled=true}); this.form.submit()"
+        form(
+            action = "/pokemons",
+            method = FormMethod.get,
+            submitText = "Filter",
+            id = "filter-form",
             onSubmit = "Array.from(this.elements).forEach(e=>{if(e.name&&!e.value)e.disabled=true})"
+        ) {
             input(name = QueryCriteriaType.PAGE.key()) {
                 id = "page-input"
                 style = "display: none;"
                 value = criteria.pagination.page.toString()
             }
-            row(JustifyContent.CENTER, gap = Gap.MAX) {
-                if (criteria.pagination.page > 1) {
-                    paginationButton("Previous", criteria.pagination.page - 1)
-                }
-                if (pokemons.size == criteria.pagination.pageSize) {
-                    paginationButton("Next", criteria.pagination.page + 1)
-                }
-            }
-            row(JustifyContent.SPACE_BETWEEN, AlignItems.CENTER, style = "width: 100%;") {
+            row(
+                JustifyContent.SPACE_BETWEEN,
+                AlignItems.END,
+                style = "width: 100%; margin-top: 1rem; flex-wrap: wrap;"
+            ) {
                 selectInput(
-                    "area",
+                    "Area",
                     QueryCriteriaType.AREA.key(),
-                    listOf("All") + Area.entries.map { it.name }
+                    listOf("All") + Area.entries.map { it.name },
+                    value = criteria.area?.name ?: "All",
+                    onChange = autoSubmit
                 )
-                textInput("search by name", QueryCriteriaType.NAME.key(), value = criteria.name)
+                textInput(
+                    "Search by name",
+                    QueryCriteriaType.NAME.key(),
+                    value = criteria.name,
+                    onChange = autoSubmit
+                )
                 numberInput(
-                    "search by number",
+                    "Search by number",
                     QueryCriteriaType.NUMBER.key(),
-                    criteria.number?.toString()
+                    criteria.number?.toString(),
+                    onChange = autoSubmit
                 )
             }
         }
@@ -75,6 +84,14 @@ class ListView(criteria: QueryCriteria, pokemons: List<Pokemon>) : HtmlLayout("P
                 row(JustifyContent.CENTER, style = "padding: 1rem;") {
                     buttonLink("/pokemons/${pokemon.hisuiId}", "Ver más info")
                 }
+            }
+        }
+        row(JustifyContent.CENTER, gap = Gap.MAX) {
+            if (criteria.pagination.page > 1) {
+                paginationButton("Previous", criteria.pagination.page - 1)
+            }
+            if (pokemons.size == criteria.pagination.pageSize) {
+                paginationButton("Next", criteria.pagination.page + 1)
             }
         }
     }
