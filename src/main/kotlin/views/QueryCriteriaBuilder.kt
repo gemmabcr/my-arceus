@@ -1,6 +1,6 @@
 package dev.gemmabcr.views
 
-import dev.gemmabcr.models.Area
+import dev.gemmabcr.models.pokemons.Area
 import dev.gemmabcr.models.Pagination
 import dev.gemmabcr.models.QueryCriteria
 import io.ktor.http.Parameters

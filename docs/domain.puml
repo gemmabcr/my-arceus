@@ -6,7 +6,7 @@ class Pokemon {
 + types: List<Type>
 + location: List<Location>
 + toDos: List<ToDo>
-+ specialCondition: SpecialCondition [optional]
++ caughtCondition: CaughtCondition [optional]
 + evolution: List<EvolutionChain>
 }
 
@@ -16,9 +16,10 @@ class Location {
 + area: Area
 }
 
-class ToDo {
-+ description: String
+abstract class ToDo {
++ id: Int
 + goal: Int
+# description(): String
 }
 
 interface EvolutionChain {
@@ -35,9 +36,11 @@ class LevelUpEvolutionDetail
 Pokemon o--> "1..*" ToDo
 Pokemon o--> "1..*" Location
 Pokemon o--> "1..*" Type
+Pokemon o--> "1..*" EvolutionChain
+EvolutionChain o--> "1..*" EvolutionChainDetail
 
-EvolvesFrom ..|> EvolutionChain
-EvolvesTo ..|> EvolutionChain
+EvolvesFrom .u.|> EvolutionChain
+EvolvesTo .u.|> EvolutionChain
 
-LevelUpEvolutionDetail ..|> EvolutionChainDetail
+LevelUpEvolutionDetail .u.|> EvolutionChainDetail
 @enduml

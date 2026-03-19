@@ -1,7 +1,7 @@
 package models
 
-import dev.gemmabcr.models.Area
 import dev.gemmabcr.models.QueryCriteria
+import dev.gemmabcr.models.pokemons.Area
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

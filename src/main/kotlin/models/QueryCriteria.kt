@@ -1,5 +1,7 @@
 package dev.gemmabcr.models
 
+import dev.gemmabcr.models.pokemons.Area
+
 data class QueryCriteria(
     val name: String? = null,
     val number: Int? = null,

@@ -1,6 +1,6 @@
-package dev.gemmabcr.models.evolutions
+package dev.gemmabcr.models.pokemons.evolutions
 
-data class EvolvesTo(
+data class EvolvesFrom(
     override val name: String,
     override val detail: EvolutionChainDetail,
 ): EvolutionChain

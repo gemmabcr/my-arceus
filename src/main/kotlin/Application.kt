@@ -1,6 +1,7 @@
 package dev.gemmabcr
 
 import com.typesafe.config.ConfigFactory
+import dev.gemmabcr.Serialization.jsonConfig
 import dev.gemmabcr.database.FlywayFactory
 import dev.gemmabcr.database.ExposedDao
 import dev.gemmabcr.database.DatabaseFactory
@@ -12,7 +13,6 @@ import io.ktor.server.application.createApplicationPlugin
 import io.ktor.server.application.hooks.CallSetup
 import io.ktor.server.application.install
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import kotlinx.serialization.json.Json
 import dev.gemmabcr.views.i18n.I18n
 import java.util.Locale
 
@@ -41,13 +41,7 @@ fun Application.module() {
     })
 
     install(ContentNegotiation) {
-        json(
-            Json {
-                prettyPrint = true
-                isLenient = true
-                ignoreUnknownKeys = true
-            }
-        )
+        json(jsonConfig)
     }
     val exposedDao = ExposedDao()
     PageFactory(exposedDao).create(this)

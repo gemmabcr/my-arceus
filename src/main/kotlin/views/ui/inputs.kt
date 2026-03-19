@@ -14,7 +14,7 @@ import kotlinx.html.style
 fun DIV.selectInput(
     label: String,
     name: String,
-    options: List<String>,
+    options: Map<String, String>,
     value: String? = null,
     onChange: String? = null
 ) {
@@ -30,8 +30,8 @@ fun DIV.selectInput(
                 "padding: 0.5rem; border: 1px solid #ddd; border-radius: 8px; background-color: white; font-family: inherit; cursor: pointer; min-width: 150px;"
             options.forEach {
                 option {
-                    selected = value == it
-                    +it
+                    selected = value == it.key
+                    +it.value
                 }
             }
         }

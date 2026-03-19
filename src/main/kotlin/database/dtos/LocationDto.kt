@@ -1,6 +1,6 @@
 package dev.gemmabcr.database.dtos
 
-import dev.gemmabcr.models.Area
+import dev.gemmabcr.models.pokemons.Area
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -12,17 +12,16 @@ object I18n {
         threadLocalLocale.set(locale)
     }
 
-    fun getLocale(): Locale {
-        return threadLocalLocale.get() ?: defaultLocale
-    }
+    fun getLocale(): Locale = threadLocalLocale.get() ?: defaultLocale
 
-    fun getMessage(key: I18nKey): String {
+    fun getMessage(i18nKey: I18nKey): String {
+        val key = i18nKey.key()
         return try {
             val bundle = ResourceBundle.getBundle("messages", getLocale())
-            bundle.getString(key.toString())
+            bundle.getString(key)
         } catch (e: MissingResourceException) {
             print("not found $e")
-            key.name
+            key
         }
     }
 }

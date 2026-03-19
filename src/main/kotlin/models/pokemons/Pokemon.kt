@@ -1,9 +1,11 @@
-package dev.gemmabcr.models
+package dev.gemmabcr.models.pokemons
+
+import dev.gemmabcr.models.pokemons.todo.ToDo
 
 data class Pokemon(
     override val hisuiId: Int,
     override val generalId: Int,
     override val name: String,
     override val types: List<Type>,
-    override val toDos: List<ToDo>,
+    override val toDos: List<ToDo<*>>,
 ): BasePokemon

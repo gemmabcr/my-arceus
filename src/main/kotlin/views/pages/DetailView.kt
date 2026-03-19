@@ -1,16 +1,18 @@
 package dev.gemmabcr.views.pages
 
-import dev.gemmabcr.models.Area
-import dev.gemmabcr.models.DetailedPokemon
-import dev.gemmabcr.models.Location
-import dev.gemmabcr.models.SpecialCondition
-import dev.gemmabcr.views.i18n.I18nKey
-import dev.gemmabcr.views.ui.Colors
-import dev.gemmabcr.views.ui.buttonLink
+import dev.gemmabcr.models.pokemons.Area
+import dev.gemmabcr.models.pokemons.CaughtCondition
+import dev.gemmabcr.models.pokemons.DetailedPokemon
+import dev.gemmabcr.models.pokemons.Location
+import dev.gemmabcr.views.adapters.AreaI18nKeyAdapter
+import dev.gemmabcr.views.adapters.CaughtConditionI18nKeyAdapter
+import dev.gemmabcr.views.i18n.CommonI18nKey
 import dev.gemmabcr.views.pages.components.pokemonCard
+import dev.gemmabcr.views.ui.Colors
 import dev.gemmabcr.views.ui.HtmlLayout
 import dev.gemmabcr.views.ui.borders.Border
 import dev.gemmabcr.views.ui.borders.BorderRadius
+import dev.gemmabcr.views.ui.buttonLink
 import dev.gemmabcr.views.ui.flexs.Gap
 import dev.gemmabcr.views.ui.flexs.column
 import dev.gemmabcr.views.ui.grid
@@ -21,13 +23,13 @@ import kotlinx.html.FlowContent
 import kotlinx.html.p
 import kotlinx.html.style
 
-class DetailView(private val pokemon: DetailedPokemon) : HtmlLayout(I18nKey.DETAIL) {
+class DetailView(private val pokemon: DetailedPokemon) : HtmlLayout(CommonI18nKey.DETAIL) {
     override fun DIV.content() {
         column(gap = Gap.MAX) {
-            buttonLink("/", translate(I18nKey.BACK))
+            buttonLink("/", translate(CommonI18nKey.BACK))
             pokemonCard(pokemon) {
                 column(style = "padding: 1rem; border-top: 1px solid ${Colors.DARK_BLUE}") {
-                    h4(translate(I18nKey.LOCATION), margin = false)
+                    h4(translate(CommonI18nKey.LOCATION), margin = false)
                     val areas: Map<Area, List<Location>> = pokemon.location.groupBy { it.area }
                     grid("repeat(3, 1fr)", style = "column-gap: 1rem;") {
                         areas.map {
@@ -39,7 +41,7 @@ class DetailView(private val pokemon: DetailedPokemon) : HtmlLayout(I18nKey.DETA
                                     ).text()
                                 }; padding: 1rem"
                             ) {
-                                h5(it.key.text, margin = false)
+                                h5(translate(AreaI18nKeyAdapter(it.key).i18nKey()), margin = false)
                                 if (it.key != Area.DISTORTION) {
                                     it.value.forEach { location ->
                                         p {
@@ -52,19 +54,19 @@ class DetailView(private val pokemon: DetailedPokemon) : HtmlLayout(I18nKey.DETA
                         }
                     }
                 }
-                maybeCreateSpecialCondition(pokemon.specialCondition)
+                maybeCreateSpecialCondition(pokemon.caughtCondition)
             }
         }
     }
 
-    private fun FlowContent.maybeCreateSpecialCondition(specialCondition: SpecialCondition?) {
+    private fun FlowContent.maybeCreateSpecialCondition(specialCondition: CaughtCondition?) {
         if (specialCondition == null) {
             return
         }
         column(style = "padding: 1rem; border-top: 1px solid ${Colors.DARK_BLUE}") {
-            h4(translate(I18nKey.SPECIAL_CONDITION), margin = false)
+            h4(translate(CommonI18nKey.SPECIAL_CONDITION), margin = false)
             p {
-                +specialCondition.toString()
+                +translate(CaughtConditionI18nKeyAdapter(specialCondition).i18nKey())
             }
         }
     }

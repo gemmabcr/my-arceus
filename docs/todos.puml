@@ -1,0 +1,83 @@
+@startuml
+abstract class ToDo {
++ id: Int
++ goal: Int
++ description(): String
+}
+
+class CaughtToDo {}
+
+ToDo <|-- CaughtToDo
+CaughtToDo *--> "0..1" CaughtCondition
+
+enum CaughtCondition {
+ALPHA
+AT_NIGHT
+DURING_THE_DAY
+HEAVY
+IN_THE_AFTERNOON
+IN_THE_AIR
+LARGE
+LIGHT
+SMALL
+WHILE_SLEEPING
+WITHOUT_BEING_DETECTED
+}
+
+class DefeatedToDo {}
+
+enum Type {
+BUG
+DARK
+DRAGON
+ELECTRIC
+FAIRY
+FIGHTING
+FIRE
+FLYING
+GHOST
+GRASS
+GROUND
+ICE
+NORMAL
+POISON
+PSYCHIC
+ROCK
+STEEL
+WATER
+}
+
+ToDo <|-- DefeatedToDo
+DefeatedToDo *--> "0..1" Type
+
+class SearchToDo {}
+
+enum SearchTask {
+BIDOOF
+BLISSEY
+CHIMECHO
+CLEFAIRY
+COMBEE
+CROAGUNK
+DRIFLOON
+EEVEE
+MR_MIME
+NOSEPASS
+PACHIRISU
+PARASECT
+PONYTA
+SILCOON_CASCOON
+SUDOWOODO
+SWINUB
+VULPIX
+ZUBAT
+}
+
+ToDo <|--SearchToDo
+SearchToDo *--> SearchTask
+
+class SpecificToDo
+ToDo <|--SpecificToDo
+
+enum SpecificToDo {}
+@enduml

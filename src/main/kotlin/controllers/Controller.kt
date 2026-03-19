@@ -1,12 +1,13 @@
 package dev.gemmabcr.controllers
 
 import dev.gemmabcr.database.dtos.PokemonDto
-import dev.gemmabcr.models.DetailedPokemon
-import dev.gemmabcr.models.Location
+import dev.gemmabcr.database.dtos.ToDoDto
 import dev.gemmabcr.models.PokemonService
-import dev.gemmabcr.models.Pokemon
 import dev.gemmabcr.models.QueryCriteria
-import dev.gemmabcr.models.ToDo
+import dev.gemmabcr.models.pokemons.DetailedPokemon
+import dev.gemmabcr.models.pokemons.Location
+import dev.gemmabcr.models.pokemons.Pokemon
+import dev.gemmabcr.models.pokemons.todo.ToDo
 
 class Controller(private val dao: PokemonService) {
 
@@ -20,8 +21,10 @@ class Controller(private val dao: PokemonService) {
         dto.generalId,
         dto.name,
         dto.types,
-        dto.toDos.map { toDo -> ToDo(toDo.description, toDo.goal) },
+        toDos(dto.toDos)
     )
+
+    fun toDos(toDos: List<ToDoDto>): List<ToDo<*>> = toDos.map { it.description }
 
     suspend fun pokemon(id: Int): DetailedPokemon {
         val result: PokemonDto = dao.read(id)
@@ -34,7 +37,7 @@ class Controller(private val dao: PokemonService) {
         dto.name,
         dto.types,
         dto.location.map { Location(it.id, it.name, it.area) },
-        dto.toDos.map { toDo -> ToDo(toDo.description, toDo.goal) },
+        toDos(dto.toDos),
         dto.specialCondition,
         emptyList()
     )

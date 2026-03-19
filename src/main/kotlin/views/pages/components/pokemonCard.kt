@@ -1,7 +1,10 @@
 package dev.gemmabcr.views.pages.components
 
-import dev.gemmabcr.models.BasePokemon
-import dev.gemmabcr.models.ToDo
+import dev.gemmabcr.models.pokemons.BasePokemon
+import dev.gemmabcr.models.pokemons.todo.ToDo
+import dev.gemmabcr.views.adapters.ToDoAdapter
+import dev.gemmabcr.views.adapters.TypeI18nKeyAdapter
+import dev.gemmabcr.views.i18n.CommonI18nKey
 import dev.gemmabcr.views.i18n.I18n
 import dev.gemmabcr.views.i18n.I18nKey
 import dev.gemmabcr.views.ui.Colors
@@ -41,7 +44,7 @@ fun FlowContent.pokemonCard(
                 +pokemon.name
             }
             row { style = "width: 100%;" }
-            typeChips(pokemon.types.map { it.name.lowercase() to it.toString() })
+            typeChips(pokemon.types.map { it.name.lowercase() to translate(TypeI18nKeyAdapter(it).i18nKey()) })
         }
         grid("240px 1fr") {
             column(JustifyContent.CENTER, AlignItems.CENTER, style = "padding: 1rem") {
@@ -53,19 +56,19 @@ fun FlowContent.pokemonCard(
     }
 }
 
-private fun FlowContent.toDos(items: List<ToDo>) {
+private fun FlowContent.toDos(items: List<ToDo<*>>) {
     column(align = AlignItems.CENTER, style = "padding: 1rem;") {
         row(JustifyContent.CENTER, AlignItems.CENTER, Gap.MAX) {
-            h4(translate(I18nKey.TODOS), margin = false)
-            buttonLink("", translate(I18nKey.EDIT))
+            h4(translate(CommonI18nKey.TODOS), margin = false)
+            buttonLink("", translate(CommonI18nKey.EDIT))
         }
-        h5("${translate(I18nKey.IN_PROGRESS)} (0/${items.size})", margin = false)
+        h5("${translate(CommonI18nKey.IN_PROGRESS)} (0/${items.size})", margin = false)
         table(
-            listOf(I18nKey.PROGRESS, I18nKey.DESCRIPTION).map { translate(it) },
+            listOf(CommonI18nKey.PROGRESS, CommonI18nKey.DESCRIPTION).map { translate(it) },
             items.map {
                 listOf(
-                    "0 ${translate(I18nKey.OF)} ${it.goal}",
-                    it.description
+                    "0 ${translate(CommonI18nKey.OF)} 0",
+                    ToDoAdapter(it).text()
                 )
             }
         )

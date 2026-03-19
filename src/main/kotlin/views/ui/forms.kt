@@ -1,5 +1,7 @@
 package dev.gemmabcr.views.ui
 
+import dev.gemmabcr.views.i18n.CommonI18nKey
+import dev.gemmabcr.views.i18n.I18n
 import dev.gemmabcr.views.ui.flexs.column
 import kotlinx.html.ButtonType
 import kotlinx.html.DIV
@@ -12,13 +14,11 @@ import kotlinx.html.onMouseOut
 import kotlinx.html.onMouseOver
 import kotlinx.html.onSubmit
 import kotlinx.html.style
-import dev.gemmabcr.views.i18n.I18n
-import dev.gemmabcr.views.i18n.I18nKey
 
 fun DIV.form(
     action: String,
     method: FormMethod,
-    submitText: String = I18n.getMessage(I18nKey.SUBMIT),
+    submitText: String = I18n.getMessage(CommonI18nKey.SUBMIT),
     id: String? = null,
     onSubmit: String? = null,
     block: DIV.() -> Unit

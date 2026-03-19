@@ -1,14 +1,15 @@
 package dev.gemmabcr.views.pages
 
-import dev.gemmabcr.models.Area
-import dev.gemmabcr.models.Pokemon
 import dev.gemmabcr.models.QueryCriteria
+import dev.gemmabcr.models.pokemons.Area
+import dev.gemmabcr.models.pokemons.Pokemon
 import dev.gemmabcr.views.QueryCriteriaType
-import dev.gemmabcr.views.i18n.I18nKey
-import dev.gemmabcr.views.ui.Colors
-import dev.gemmabcr.views.ui.buttonLink
+import dev.gemmabcr.views.adapters.AreaI18nKeyAdapter
+import dev.gemmabcr.views.i18n.CommonI18nKey
 import dev.gemmabcr.views.pages.components.pokemonCard
+import dev.gemmabcr.views.ui.Colors
 import dev.gemmabcr.views.ui.HtmlLayout
+import dev.gemmabcr.views.ui.buttonLink
 import dev.gemmabcr.views.ui.flexs.AlignItems
 import dev.gemmabcr.views.ui.flexs.Gap
 import dev.gemmabcr.views.ui.flexs.JustifyContent
@@ -30,7 +31,7 @@ import kotlinx.html.p
 import kotlinx.html.style
 
 class ListView(private val criteria: QueryCriteria, private val pokemons: List<Pokemon>) :
-    HtmlLayout(I18nKey.LIST) {
+    HtmlLayout(CommonI18nKey.LIST) {
     override fun DIV.content() {
         column(gap = Gap.MAX) {
             val autoSubmit =
@@ -38,7 +39,7 @@ class ListView(private val criteria: QueryCriteria, private val pokemons: List<P
             form(
                 action = "/pokemons",
                 method = FormMethod.get,
-                submitText = translate(I18nKey.FILTER),
+                submitText = translate(CommonI18nKey.FILTER),
                 id = "filter-form",
                 onSubmit = "Array.from(this.elements).forEach(e=>{if(e.name&&!e.value)e.disabled=true})"
             ) {
@@ -53,20 +54,20 @@ class ListView(private val criteria: QueryCriteria, private val pokemons: List<P
                     style = "width: 100%; margin-top: 1rem; flex-wrap: wrap;"
                 ) {
                     selectInput(
-                        translate(I18nKey.AREA),
+                        translate(CommonI18nKey.AREA),
                         QueryCriteriaType.AREA.key(),
-                        listOf(translate(I18nKey.ALL)) + Area.entries.map { it.name },
-                        value = criteria.area?.name ?: translate(I18nKey.ALL),
+                        areaOptions(),
+                        value = criteria.area?.name ?: translate(CommonI18nKey.ALL),
                         onChange = autoSubmit
                     )
                     textInput(
-                        translate(I18nKey.NAME),
+                        translate(CommonI18nKey.NAME),
                         QueryCriteriaType.NAME.key(),
                         value = criteria.name,
                         onChange = autoSubmit
                     )
                     numberInput(
-                        translate(I18nKey.NUMBER),
+                        translate(CommonI18nKey.NUMBER),
                         QueryCriteriaType.NUMBER.key(),
                         criteria.number?.toString(),
                         onChange = autoSubmit
@@ -75,7 +76,7 @@ class ListView(private val criteria: QueryCriteria, private val pokemons: List<P
             }
             if (pokemons.isEmpty()) {
                 row(JustifyContent.CENTER) {
-                    p { +translate(I18nKey.NO_RESULTS) }
+                    p { +translate(CommonI18nKey.NO_RESULTS) }
                     img(src = "/icons/not_found.png") {
                         height = "120"
                         width = "120"
@@ -85,20 +86,25 @@ class ListView(private val criteria: QueryCriteria, private val pokemons: List<P
             pokemons.forEach { pokemon ->
                 pokemonCard(pokemon) {
                     row(JustifyContent.CENTER, style = "padding: 1rem;") {
-                        buttonLink("/pokemons/${pokemon.hisuiId}", translate(I18nKey.MORE_INFO))
+                        buttonLink("/pokemons/${pokemon.hisuiId}", translate(CommonI18nKey.MORE_INFO))
                     }
                 }
             }
             row(JustifyContent.CENTER, gap = Gap.MAX) {
                 if (criteria.pagination.page > 1) {
-                    paginationButton(translate(I18nKey.PREVIOUS), criteria.pagination.page - 1)
+                    paginationButton(translate(CommonI18nKey.PREVIOUS), criteria.pagination.page - 1)
                 }
                 if (pokemons.size == criteria.pagination.pageSize) {
-                    paginationButton(translate(I18nKey.NEXT), criteria.pagination.page + 1)
+                    paginationButton(translate(CommonI18nKey.NEXT), criteria.pagination.page + 1)
                 }
             }
         }
     }
+
+    private fun areaOptions(): Map<String, String> =
+        mapOf("" to translate(CommonI18nKey.ALL)) + Area.entries.associate {
+            it.name to translate(AreaI18nKeyAdapter(it).i18nKey())
+        }
 
     private fun DIV.paginationButton(text: String, toPage: Int) {
         button(type = ButtonType.button) {

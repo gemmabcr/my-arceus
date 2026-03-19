@@ -1,4 +1,4 @@
-package dev.gemmabcr.models.evolutions
+package dev.gemmabcr.models.pokemons.evolutions
 
 interface EvolutionChain {
     val name: String

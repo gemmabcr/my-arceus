@@ -1,4 +1,4 @@
-package dev.gemmabcr.models
+package dev.gemmabcr.models.pokemons
 
 data class Location(
     val id: Int,

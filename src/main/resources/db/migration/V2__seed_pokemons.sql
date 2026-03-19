@@ -165,7 +165,7 @@ VALUES (1, 'rowlet', ARRAY[9, 7]::INTEGER[], ARRAY[92]::INTEGER[], '{"3": 5, "11
        (164, 'mantyke', ARRAY[17, 7]::INTEGER[], ARRAY[38, 53]::INTEGER[], '{"3": 15, "29": 7, "7": 10, "10": 15, "14": 10, "80": 25, "26": 1}'::jsonb),
        (165, 'mantine', ARRAY[17, 7]::INTEGER[], ARRAY[38]::INTEGER[], '{"3": 15, "27": 7, "10": 15, "14": 20, "106": 40, "70": 25, "43": 25}'::jsonb),
        (166, 'basculin', ARRAY[17]::INTEGER[], ARRAY[38, 44, 65, 80, 83]::INTEGER[], '{"3": 15, "27": 7, "164": 40, "70": 40, "26": 1}'::jsonb),
-       (167, 'basculegion', ARRAY[17, 8]::INTEGER[], ARRAY[]::INTEGER[], '{"3": 5, "42": 40, "43": 40, "155": 25}'::jsonb),
+       (167, 'basculegion', ARRAY[17, 8]::INTEGER[], ARRAY[]::INTEGER[], '{"3": 5, "53": 40, "155": 25, "42": 40, "43": 40}'::jsonb),
        (168, 'vulpix', ARRAY[6]::INTEGER[], ARRAY[40]::INTEGER[], '{"3": 25, "7": 10, "6": 1, "10": 15, "54": 25, "44": 5, "41": 2, "26": 3, "165": 1}'::jsonb),
        (169, 'ninetales', ARRAY[6]::INTEGER[], ARRAY[49]::INTEGER[], '{"3": 10, "0": 3, "10": 10, "12": 3, "84": 25, "86": 40, "43": 15, "41": 2}'::jsonb),
        (170, 'tentacool', ARRAY[17, 13]::INTEGER[], ARRAY[44, 48, 54]::INTEGER[], '{"3": 15, "28": 7, "7": 10, "10": 25, "14": 20, "163": 25, "26": 1}'::jsonb),
