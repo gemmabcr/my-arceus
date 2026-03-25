@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 
 object DatabaseFactory {
     fun init(config: Config) {
-        Database.Companion.connect(
+        Database.connect(
             url = config.getString("db.url"),
             driver = config.getString("db.driver"),
             user = config.getString("db.user"),

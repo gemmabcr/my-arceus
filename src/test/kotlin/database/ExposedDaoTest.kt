@@ -32,7 +32,6 @@ class ExposedDaoTest {
 
     private fun insertTestData() {
         transaction {
-            // Insert Locations
             val loc1Id = LocationsTable.insert {
                 it[LocationsTable.id] = 1
                 it[LocationsTable.name] = "Deertrack Path"
@@ -45,7 +44,6 @@ class ExposedDaoTest {
                 it[LocationsTable.area] = Area.MIRELANDS
             } get LocationsTable.id
 
-            // Insert Pokemons
             PokemonsTable.insert {
                 it[PokemonsTable.id] = 25
                 it[PokemonsTable.generalId] = 25
@@ -76,16 +74,16 @@ class ExposedDaoTest {
     }
 
     @Test
-    fun givenDefaultCriteria_whenReadAll_thenReturnsAllRows() = runBlocking {
-        val result = dao.readAll(QueryCriteria())
+    fun givenDefaultCriteria_whenPokemonsRows() = runBlocking {
+        val result = dao.pokemons(QueryCriteria())
 
         assertEquals(3, result.size)
     }
 
     @Test
-    fun givenCriteriaWithArea_whenReadAll_thenReturnsCorrespondingRows() = runBlocking {
+    fun givenCriteriaWithArea_whenPokemons_thenReturnsCorrespondingRows() = runBlocking {
         val criteria = QueryCriteria(area = Area.MIRELANDS)
-        val result = dao.readAll(criteria)
+        val result = dao.pokemons(criteria)
         
         assertEquals(2, result.size)
         assertTrue(result.any { it.name == "Geodude" })
@@ -94,35 +92,34 @@ class ExposedDaoTest {
     }
 
     @Test
-    fun givenCriteriaWithName_whenReadAll_thenReturnsCorrespondingRow() = runBlocking {
+    fun givenCriteriaWithName_whenPokemons_thenReturnsCorrespondingRow() = runBlocking {
         val criteria = QueryCriteria(name = "pika")
-        val result = dao.readAll(criteria)
+        val result = dao.pokemons(criteria)
         
         assertEquals(1, result.size)
         assertEquals("Pikachu", result.first().name)
     }
 
     @Test
-    fun givenCriteriaWithNumber_whenReadAll_thenReturnsCorrespondingRow() = runBlocking {
+    fun givenCriteriaWithNumber_whenPokemons_thenReturnsCorrespondingRow() = runBlocking {
         val criteria = QueryCriteria(number = 95)
-        val result = dao.readAll(criteria)
+        val result = dao.pokemons(criteria)
 
         assertEquals(1, result.size)
         assertEquals("Onix", result.first().name)
     }
 
     @Test
-    fun givenExistingId_whenRead_thenReturnExistingRow() = runBlocking {
+    fun givenExistingId_whenPokemon_thenReturnExistingRow() = runBlocking {
         val id = 25
-        val result = dao.read(id)
+        val result = dao.pokemon(id)
 
         assertEquals("Pikachu", result.name)
         assertEquals(id, result.id)
     }
 
     @Test
-    fun givenCriteriaWithPage_whenReadAll_thenReturnsRowsFromThatPage() = runBlocking {
-        // Insert more data to test pagination
+    fun givenCriteriaWithPage_whenPokemons_thenReturnsRowsFromThatPage() = runBlocking {
         transaction {
             (101..105).forEach { i ->
                 PokemonsTable.insert {
@@ -138,7 +135,7 @@ class ExposedDaoTest {
         
         val pagination = Pagination(page = 1, pageSize = 3)
         val criteriaPage1 = QueryCriteria(pagination = pagination)
-        val resultPage1 = dao.readAll(criteriaPage1)
+        val resultPage1 = dao.pokemons(criteriaPage1)
         
         assertEquals(3, resultPage1.size, "Expected 3 items in page 1, but got ${resultPage1.size}")
         assertEquals(25, resultPage1[0].id)
@@ -147,13 +144,13 @@ class ExposedDaoTest {
 
         val pagination2 = Pagination(page = 2, pageSize = 3)
         val criteriaPage2 = QueryCriteria(pagination = pagination2)
-        val resultPage2 = dao.readAll(criteriaPage2)
+        val resultPage2 = dao.pokemons(criteriaPage2)
         assertEquals(3, resultPage2.size)
         assertEquals(101, resultPage2[0].id)
 
         val pagination3 = Pagination(page = 3, pageSize = 3)
         val criteriaPage3 = QueryCriteria(pagination = pagination3)
-        val resultPage3 = dao.readAll(criteriaPage3)
+        val resultPage3 = dao.pokemons(criteriaPage3)
         assertEquals(2, resultPage3.size)
         assertEquals(104, resultPage3[0].id)
     }

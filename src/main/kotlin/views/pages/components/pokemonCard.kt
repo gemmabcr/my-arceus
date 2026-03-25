@@ -1,7 +1,7 @@
 package dev.gemmabcr.views.pages.components
 
 import dev.gemmabcr.models.pokemons.BasePokemon
-import dev.gemmabcr.models.pokemons.todo.ToDo
+import dev.gemmabcr.models.pokemons.todo.ProgressToDo
 import dev.gemmabcr.views.adapters.ToDoAdapter
 import dev.gemmabcr.views.adapters.TypeI18nKeyAdapter
 import dev.gemmabcr.views.i18n.CommonI18nKey
@@ -56,22 +56,38 @@ fun FlowContent.pokemonCard(
     }
 }
 
-private fun FlowContent.toDos(items: List<ToDo<*>>) {
+private fun FlowContent.toDos(toDos: List<ProgressToDo>) {
     column(align = AlignItems.CENTER, style = "padding: 1rem;") {
         row(JustifyContent.CENTER, AlignItems.CENTER, Gap.MAX) {
             h4(translate(CommonI18nKey.TODOS), margin = false)
             buttonLink("", translate(CommonI18nKey.EDIT))
         }
-        h5("${translate(CommonI18nKey.IN_PROGRESS)} (0/${items.size})", margin = false)
-        table(
-            listOf(CommonI18nKey.PROGRESS, CommonI18nKey.DESCRIPTION).map { translate(it) },
-            items.map {
-                listOf(
-                    "0 ${translate(CommonI18nKey.OF)} 0",
-                    ToDoAdapter(it).text()
+        val isCompleted = toDos.all { it.completed() }
+        when (isCompleted) {
+            true -> {
+                h5(
+                    "\uD83C\uDF89 ${translate(CommonI18nKey.COMPLETED)}!!",
+                    margin = false
                 )
             }
-        )
+
+            false -> {
+                h5(
+                    "${translate(CommonI18nKey.IN_PROGRESS)} (${toDos.filter { it.completed() }.size}/${toDos.size})",
+                    margin = false
+                )
+                table(
+                    listOf(CommonI18nKey.PROGRESS, CommonI18nKey.DESCRIPTION).map { translate(it) },
+                    toDos.map { toDo ->
+                        listOf(
+                            "${toDo.done} ${translate(CommonI18nKey.OF)} ${toDo.goal}",
+                            ToDoAdapter(toDo.toDo).text()
+                        )
+                    }
+                )
+
+            }
+        }
     }
 }
 

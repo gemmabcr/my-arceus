@@ -3,18 +3,21 @@ package dev.gemmabcr.database
 import dev.gemmabcr.database.dtos.LocationDto
 import dev.gemmabcr.database.dtos.PokemonDto
 import dev.gemmabcr.database.dtos.ToDoDto
+import dev.gemmabcr.database.dtos.UserToDoDto
 import dev.gemmabcr.database.tables.LocationsTable
 import dev.gemmabcr.database.tables.PokemonsTable
 import dev.gemmabcr.database.tables.ToDosTable
+import dev.gemmabcr.database.tables.UserToDosTable
 import dev.gemmabcr.models.PokemonService
 import dev.gemmabcr.models.QueryCriteria
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
+import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.selectAll
 
 class ExposedDao : PokemonService {
-    override suspend fun readAll(criteria: QueryCriteria): List<PokemonDto> = DatabaseFactory.dbQuery {
+    override suspend fun pokemons(criteria: QueryCriteria): List<PokemonDto> = DatabaseFactory.dbQuery {
         val filterLocationIds = when {
             criteria.area != null -> {
                 LocationsTable.selectAll()
@@ -95,11 +98,30 @@ class ExposedDao : PokemonService {
             }
     }
 
-    override suspend fun read(id: Int): PokemonDto = DatabaseFactory.dbQuery {
+    override suspend fun pokemon(pokemon: Int): PokemonDto = DatabaseFactory.dbQuery {
         PokemonsTable.selectAll()
-            .where(PokemonsTable.id eq id)
+            .where(PokemonsTable.id eq pokemon)
             .limit(1)
             .map { pokemonDto(it) }
             .single()
+    }
+
+    override suspend fun userTodos(user: Int): List<UserToDoDto> = DatabaseFactory.dbQuery {
+        UserToDosTable.selectAll()
+            .where(UserToDosTable.userId eq user)
+            .map(::userToDoDto)
+    }
+
+    private fun userToDoDto(row: ResultRow): UserToDoDto = UserToDoDto(
+        userId = row[UserToDosTable.userId],
+        pokemonId = row[UserToDosTable.pokemonId],
+        todoId = row[UserToDosTable.todoId],
+        done = row[UserToDosTable.done],
+    )
+
+    override suspend fun userTodos(user: Int, pokemonId: Int): List<UserToDoDto> = DatabaseFactory.dbQuery {
+        UserToDosTable.selectAll()
+            .where(UserToDosTable.userId eq user and (UserToDosTable.pokemonId eq pokemonId))
+            .map(::userToDoDto)
     }
 }

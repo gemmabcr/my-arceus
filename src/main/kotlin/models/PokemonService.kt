@@ -1,9 +1,14 @@
 package dev.gemmabcr.models
 
 import dev.gemmabcr.database.dtos.PokemonDto
+import dev.gemmabcr.database.dtos.UserToDoDto
 
 interface PokemonService {
-    suspend fun readAll(criteria: QueryCriteria): List<PokemonDto>
+    suspend fun pokemons(criteria: QueryCriteria): List<PokemonDto>
 
-    suspend fun read(id: Int): PokemonDto
+    suspend fun pokemon(pokemon: Int): PokemonDto
+
+    suspend fun userTodos(user: Int): List<UserToDoDto>
+
+    suspend fun userTodos(user: Int, pokemonId: Int): List<UserToDoDto>
 }

@@ -2,6 +2,7 @@ package dev.gemmabcr.views
 
 import dev.gemmabcr.controllers.Controller
 import dev.gemmabcr.models.PokemonService
+import dev.gemmabcr.models.Session
 import dev.gemmabcr.views.pages.DetailView
 import dev.gemmabcr.views.pages.ListView
 import io.ktor.http.HttpHeaders
@@ -31,12 +32,12 @@ class PageFactory(service: PokemonService) {
                 get {
                     val parameters: Parameters = call.request.queryParameters
                     val criteria = QueryCriteriaBuilder().with(parameters).build()
-                    val pokemons = controller.pokemons(criteria)
+                    val pokemons = controller.pokemons(criteria, createSession())
                     call.respondHtmlTemplate(ListView(criteria, pokemons)) {}
                 }
                 get("/{id}") {
                     val id = call.parameters["id"]!!.toInt()
-                    val pokemon = controller.pokemon(id)
+                    val pokemon = controller.pokemon(id, createSession())
                     call.respondHtmlTemplate(DetailView(pokemon)) {}
                 }
             }
@@ -50,4 +51,6 @@ class PageFactory(service: PokemonService) {
             }
         }
     }
+
+    private fun createSession(): Session = Session() // TODO
 }

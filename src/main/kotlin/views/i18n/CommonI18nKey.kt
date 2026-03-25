@@ -7,6 +7,7 @@ enum class CommonI18nKey : I18nKey {
     BACK,
     BASE_DEFEATED,
     BASE_SEARCH,
+    COMPLETED,
     DESCRIPTION,
     DETAIL,
     EDIT,
