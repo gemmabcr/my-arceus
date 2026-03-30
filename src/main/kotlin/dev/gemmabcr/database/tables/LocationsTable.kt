@@ -1,0 +1,13 @@
+package dev.gemmabcr.database.tables
+
+import dev.gemmabcr.models.pokemons.Area
+import org.jetbrains.exposed.sql.Table
+
+object LocationsTable : Table("locations") {
+    val id = integer("id")
+    val name = varchar("name", NAME_LENGTH)
+    val area = enumeration<Area>("area")
+    override val primaryKey = PrimaryKey(id)
+}
+
+private const val NAME_LENGTH = 30

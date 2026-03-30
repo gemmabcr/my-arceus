@@ -2,13 +2,13 @@ val kotlin_version: String by project
 val logback_version: String by project
 val ktor_version: String by project
 
-group = "dev.gemmabcr"
 version = "0.0.1"
 
 plugins {
     kotlin("jvm") version "1.9.22"
     kotlin("plugin.serialization") version "1.9.22"
     application
+    id("io.gitlab.arturbosch.detekt") version "1.23.6"
 }
 
 application {
@@ -16,7 +16,7 @@ application {
 }
 
 kotlin {
-   jvmToolchain(17)
+    jvmToolchain(17)
 }
 
 dependencies {
@@ -45,4 +45,10 @@ dependencies {
     implementation("org.postgresql:postgresql:42.7.1")
     implementation("org.flywaydb:flyway-core:9.22.3")
     implementation("org.flywaydb:flyway-database-postgresql:10.15.0")
+}
+
+detekt {
+    toolVersion = "1.23.6"
+    config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
+    buildUponDefaultConfig = true
 }

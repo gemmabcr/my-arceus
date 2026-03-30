@@ -1,4 +1,13 @@
 #!/bin/sh
+./gradlew detekt
+
+DETekt_STATUS=$?
+
+if [ $DETekt_STATUS -ne 0 ]; then
+  echo "❌ Detekt ha detectat problemes. Commit cancel·lat."
+  exit 1
+fi
+
 echo "🔍 Executant build i tests amb Gradle..."
 
 ./gradlew build
