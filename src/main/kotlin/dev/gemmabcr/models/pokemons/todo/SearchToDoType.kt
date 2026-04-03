@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("search")
-data class SearchToDo(
+data class SearchToDoType(
     override val condition: SearchTask
-) : ToDo<SearchTask>()
+) : ToDoType<SearchTask>()

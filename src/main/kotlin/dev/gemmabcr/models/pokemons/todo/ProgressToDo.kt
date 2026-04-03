@@ -2,7 +2,7 @@ package dev.gemmabcr.models.pokemons.todo
 
 data class ProgressToDo(
     val id: Int,
-    val toDo: ToDo<*>,
+    val toDoType: ToDoType<*>,
     val done: Int,
     val goal: Int
 ) {

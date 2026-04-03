@@ -31,9 +31,10 @@ class PageFactory(service: PokemonService) {
             route("/pokemons") {
                 get {
                     val parameters: Parameters = call.request.queryParameters
-                    val criteria = QueryCriteriaBuilder().with(parameters).build()
+                    val todos = controller.toDos()
+                    val criteria = QueryCriteriaBuilder().with(todos).with(parameters).build()
                     val pokemons = controller.pokemons(criteria, createSession())
-                    call.respondHtmlTemplate(ListView(criteria, pokemons)) {}
+                    call.respondHtmlTemplate(ListView(criteria, pokemons, todos)) {}
                 }
                 get("/{id}") {
                     val id = call.parameters["id"]!!.toInt()
@@ -52,5 +53,5 @@ class PageFactory(service: PokemonService) {
         }
     }
 
-    private fun createSession(): Session = Session() // TODO
+    private fun createSession(): Session = Session(1) // TODO
 }

@@ -3,8 +3,10 @@ package dev.gemmabcr.views.pages
 import dev.gemmabcr.models.QueryCriteria
 import dev.gemmabcr.models.pokemons.Area
 import dev.gemmabcr.models.pokemons.Pokemon
+import dev.gemmabcr.models.pokemons.todo.ToDo
 import dev.gemmabcr.views.QueryCriteriaType
 import dev.gemmabcr.views.adapters.AreaI18nKeyAdapter
+import dev.gemmabcr.views.adapters.ToDoTypeAdapter
 import dev.gemmabcr.views.i18n.CommonI18nKey
 import dev.gemmabcr.views.pages.components.PokemonCard
 import dev.gemmabcr.views.ui.Colors
@@ -31,7 +33,11 @@ import kotlinx.html.onClick
 import kotlinx.html.p
 import kotlinx.html.style
 
-class ListView(private val criteria: QueryCriteria, private val pokemons: List<Pokemon>) :
+class ListView(
+    private val criteria: QueryCriteria,
+    private val pokemons: List<Pokemon>,
+    private val todos: List<ToDo>
+) :
     HtmlLayout(CommonI18nKey.LIST) {
     override fun DIV.content() {
         column(gap = Gap.MAX) {
@@ -50,11 +56,11 @@ class ListView(private val criteria: QueryCriteria, private val pokemons: List<P
                 }
             }
             pokemons.forEach { pokemon ->
-                PokemonCard(pokemon).create(this).apply {
+                PokemonCard(pokemon).with {
                     row(JustifyContent.CENTER, style = "padding: 1rem;") {
                         buttonLink("/pokemons/${pokemon.hisuiId}", translate(CommonI18nKey.MORE_INFO))
                     }
-                }
+                }.create(this)
             }
             row(JustifyContent.CENTER, gap = Gap.MAX) {
                 if (criteria.pagination.page > 1) {
@@ -91,7 +97,7 @@ class ListView(private val criteria: QueryCriteria, private val pokemons: List<P
                     translate(CommonI18nKey.AREA),
                     QueryCriteriaType.AREA.key(),
                     areaOptions(),
-                    value = criteria.area?.name ?: translate(CommonI18nKey.ALL),
+                    value = criteria.area?.name ?: "",
                     onChange = autoSubmit
                 )
                 textInput(
@@ -106,6 +112,13 @@ class ListView(private val criteria: QueryCriteria, private val pokemons: List<P
                     criteria.number?.toString(),
                     onChange = autoSubmit
                 )
+                selectInput(
+                    translate(CommonI18nKey.TODOS),
+                    QueryCriteriaType.TO_DO.key(),
+                    toDoOptions(),
+                    value = criteria.toDo?.id?.toString() ?: "",
+                    onChange = autoSubmit
+                )
             }
         }
     }
@@ -114,6 +127,9 @@ class ListView(private val criteria: QueryCriteria, private val pokemons: List<P
         mapOf("" to translate(CommonI18nKey.ALL)) + Area.entries.associate {
             it.name to translate(AreaI18nKeyAdapter(it).i18nKey())
         }
+
+    private fun toDoOptions(): Map<String, String> =
+        mapOf("" to "") + todos.associate { it.id.toString() to ToDoTypeAdapter(it.description).text() }
 
     private fun DIV.paginationButton(text: String, toPage: Int) {
         button(type = ButtonType.button) {

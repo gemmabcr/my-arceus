@@ -1,7 +1,7 @@
 package dev.gemmabcr.views.pages.components
 
 import dev.gemmabcr.models.pokemons.todo.ProgressToDo
-import dev.gemmabcr.views.adapters.ToDoAdapter
+import dev.gemmabcr.views.adapters.ToDoTypeAdapter
 import dev.gemmabcr.views.i18n.CommonI18nKey
 import dev.gemmabcr.views.ui.Colors
 import dev.gemmabcr.views.ui.buttonLink
@@ -33,7 +33,7 @@ class ToDos(private val toDos: List<ProgressToDo>) : View {
                         toDos.map { toDo ->
                             RowTableConfig(
                                 if (toDo.completed()) Colors.CREAM_LIGHEST else Colors.WHITE,
-                                listOf(numbersText(toDo), ToDoAdapter(toDo.toDo).text())
+                                listOf(numbersText(toDo), ToDoTypeAdapter(toDo.toDoType).text())
                             )
                         }
                     )
@@ -43,7 +43,7 @@ class ToDos(private val toDos: List<ProgressToDo>) : View {
     }
 
     private fun title(isCompleted: Boolean): String = when (isCompleted) {
-        true -> "$\uD83C\uDF89 ${translate(CommonI18nKey.COMPLETED)}!!"
+        true -> "\uD83C\uDF89 ${translate(CommonI18nKey.COMPLETED)}!!"
         false -> "${translate(CommonI18nKey.IN_PROGRESS)} (${toDos.filter { it.completed() }.size}/${toDos.size})"
     }
 

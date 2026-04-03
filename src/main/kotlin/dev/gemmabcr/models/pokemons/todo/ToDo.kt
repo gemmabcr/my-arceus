@@ -1,9 +1,6 @@
 package dev.gemmabcr.models.pokemons.todo
 
-import kotlinx.serialization.Serializable
-
-@Serializable
-sealed class ToDo<TYPE: ToDoCondition> {
-    abstract val condition: TYPE?
-}
-
+data class ToDo(
+    val id: Int,
+    val description: ToDoType<out ToDoCondition>,
+)

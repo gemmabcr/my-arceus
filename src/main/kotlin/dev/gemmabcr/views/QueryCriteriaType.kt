@@ -4,7 +4,8 @@ enum class QueryCriteriaType {
     AREA,
     NAME,
     NUMBER,
-    PAGE;
+    PAGE,
+    TO_DO;
 
     fun key(): String = this.name.lowercase()
 }

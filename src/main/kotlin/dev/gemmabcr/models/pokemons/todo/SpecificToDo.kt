@@ -7,4 +7,4 @@ import kotlinx.serialization.Serializable
 @SerialName("specific")
 data class SpecificToDo(
     override val condition: SpecificToDoType
-) : ToDo<SpecificToDoType>()
+) : ToDoType<SpecificToDoType>()

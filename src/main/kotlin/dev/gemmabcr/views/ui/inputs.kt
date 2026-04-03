@@ -32,6 +32,7 @@ fun DIV.selectInput(
             options.forEach {
                 option {
                     selected = value == it.key
+                    this.value = it.key
                     +it.value
                 }
             }

@@ -10,9 +10,9 @@ import dev.gemmabcr.models.pokemons.DetailedPokemon
 import dev.gemmabcr.models.pokemons.Location
 import dev.gemmabcr.models.pokemons.Pokemon
 import dev.gemmabcr.models.pokemons.todo.ProgressToDo
+import dev.gemmabcr.models.pokemons.todo.ToDo
 
 class Controller(private val dao: PokemonService) {
-
     suspend fun pokemons(criteria: QueryCriteria, session: Session): List<Pokemon> {
         val pokemons = dao.pokemons(criteria).map(::createPokemon)
         val userId = session.user ?: return pokemons
@@ -33,14 +33,11 @@ class Controller(private val dao: PokemonService) {
             toDos(dto.toDos)
         )
 
-    fun toDos(toDos: List<ToDoDto>): List<ProgressToDo> = toDos.map {
-        ProgressToDo(
-            it.id,
-            it.description,
-            0,
-            it.goal
-        )
+    private fun toDos(toDos: List<ToDoDto>): List<ProgressToDo> = toDos.map {
+        ProgressToDo(it.id, it.description, 0, it.goal)
     }
+
+    suspend fun toDos(): List<ToDo> = dao.todos()
 
     suspend fun pokemon(id: Int, session: Session): DetailedPokemon {
         val result: PokemonDto = dao.pokemon(id)

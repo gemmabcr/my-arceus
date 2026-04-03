@@ -16,6 +16,7 @@ import kotlinx.html.style
 class PokemonCard(
     private val pokemon: BasePokemon,
 ) : View {
+    private var child: () -> Unit = {}
     override fun create(content: FlowContent): FlowContent = content.apply {
         column {
             style =
@@ -39,6 +40,7 @@ class PokemonCard(
             grid("240px 1fr") {
                 column(JustifyContent.CENTER, AlignItems.CENTER, style = "padding: 1rem") {
                     PokemonImage(pokemon.generalId).create(this)
+                    child()
                 }
                 ToDos(pokemon.toDos).create(this)
             }
@@ -46,4 +48,8 @@ class PokemonCard(
     }
 
     private fun textStyle(): String = "display: flex; margin: 0; color: ${Colors.ON_DARK_BLUE};"
+
+    fun with(child: () -> Unit) = apply {
+        this.child = child
+    }
 }

@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("defeated")
-data class DefeatedToDo(
+data class DefeatedToDoType(
     override val condition: Type?
-) : ToDo<Type>()
+) : ToDoType<Type>()
