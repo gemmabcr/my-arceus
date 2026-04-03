@@ -23,7 +23,7 @@ This project is built using modern Kotlin technologies:
 - **Database**: [PostgreSQL](https://www.postgresql.org/) (Production) / [H2](https://www.h2database.com/html/main.html) (Testing)
 - **Frontend**: Server-Side Rendering with [Kotlin HTML DSL](https://github.com/Kotlin/kotlinx.html)
 - **Build Tool**: [Gradle](https://gradle.org/)
-- **AI Assistant**: [Antigravity](https://gemini.google.com/app/antigravity)
+- **AI Assistant**: [Codex](https://openai.com/codex/)
 
 ## Getting Started
 

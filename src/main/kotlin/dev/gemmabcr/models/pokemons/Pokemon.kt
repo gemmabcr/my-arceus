@@ -8,4 +8,5 @@ data class Pokemon(
     override val name: String,
     override val types: List<Type>,
     override val toDos: List<ProgressToDo>,
+    val inTeam: Boolean = false,
 ): BasePokemon

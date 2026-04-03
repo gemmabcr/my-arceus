@@ -29,12 +29,13 @@ fun DIV.form(
 fun FlowContent.button(
     text: String,
     type: ButtonType = ButtonType.button,
+    style: String? = null,
     block: (kotlinx.html.BUTTON.() -> Unit)? = null
 ) {
     button(type = type) {
-        style = "background-color: ${Colors.CREAM}; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; " +
+        this.style = "background-color: ${Colors.CREAM}; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; " +
                 "cursor: pointer; font-weight: bold; color: ${Colors.DARKEST_BLUE}; height: 42px; " +
-                "transition: all 0.2s ease-in-out; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+                "transition: all 0.2s ease-in-out; box-shadow: 0 2px 4px rgba(0,0,0,0.1);${style?.let { " $it" } ?: ""}"
         onMouseOver =
             "this.style.backgroundColor='#EAE4C3'; " +
                     "this.style.transform='translateY(-1px)'; " +

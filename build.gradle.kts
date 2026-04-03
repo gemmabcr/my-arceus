@@ -29,6 +29,7 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     testImplementation("com.h2database:h2:2.2.224")
+    testImplementation("io.mockk:mockk:1.13.10")
 
     implementation("io.ktor:ktor-server-html-builder:$ktor_version")
 

@@ -5,7 +5,10 @@ enum class QueryCriteriaType {
     NAME,
     NUMBER,
     PAGE,
-    TO_DO;
+    TO_DO,
+    TYPE,
+    TEAM,
+    UNCOMPLETED;
 
     fun key(): String = this.name.lowercase()
 }

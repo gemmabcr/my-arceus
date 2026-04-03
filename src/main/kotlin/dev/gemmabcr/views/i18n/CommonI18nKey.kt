@@ -25,8 +25,10 @@ enum class CommonI18nKey : I18nKey {
     OF,
     PREVIOUS,
     PROGRESS,
+    SHOW_ONLY_UNCOMPLETED,
     SPECIAL_CONDITION,
     TITLE,
+    TYPE,
     TODOS;
 
     override fun itemName() = name

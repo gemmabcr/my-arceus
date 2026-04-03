@@ -2,9 +2,11 @@ package dev.gemmabcr
 
 import com.typesafe.config.ConfigFactory
 import dev.gemmabcr.Serialization.jsonConfig
+import dev.gemmabcr.controllers.Controller
 import dev.gemmabcr.database.FlywayFactory
-import dev.gemmabcr.database.ExposedDao
+import dev.gemmabcr.database.ExposedPokemonDao
 import dev.gemmabcr.database.DatabaseFactory
+import dev.gemmabcr.database.ExposedUserDao
 import dev.gemmabcr.views.PageFactory
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
@@ -30,7 +32,7 @@ fun Application.module() {
         on(CallSetup) { call ->
             val langCookie = call.request.cookies["lang"]
             val acceptLanguage = call.request.headers[HttpHeaders.AcceptLanguage]
-            
+
             val locale = when {
                 langCookie != null -> Locale.forLanguageTag(langCookie)
                 acceptLanguage != null -> Locale.forLanguageTag(acceptLanguage.split(",").first().trim())
@@ -43,6 +45,10 @@ fun Application.module() {
     install(ContentNegotiation) {
         json(jsonConfig)
     }
-    val exposedDao = ExposedDao()
-    PageFactory(exposedDao).create(this)
+    PageFactory(
+        Controller(
+            ExposedPokemonDao(),
+            ExposedUserDao()
+        )
+    ).create(this)
 }

@@ -2,6 +2,7 @@ package models
 
 import dev.gemmabcr.models.QueryCriteria
 import dev.gemmabcr.models.pokemons.Area
+import dev.gemmabcr.models.pokemons.Type
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -38,6 +39,20 @@ class QueryCriteriaTest {
     @Test
     fun givenWithArea_whenIsFiltered_thenReturnsTrue() {
         val criteria = QueryCriteria(area = Area.entries.random())
+
+        assertTrue(criteria.isFiltered())
+    }
+
+    @Test
+    fun givenWithType_whenIsFiltered_thenReturnsTrue() {
+        val criteria = QueryCriteria(type = Type.entries.random())
+
+        assertTrue(criteria.isFiltered())
+    }
+
+    @Test
+    fun givenOnlyTeam_whenIsFiltered_thenReturnsTrue() {
+        val criteria = QueryCriteria(onlyTeam = true)
 
         assertTrue(criteria.isFiltered())
     }

@@ -3,6 +3,7 @@ package dev.gemmabcr.views
 import dev.gemmabcr.models.pokemons.Area
 import dev.gemmabcr.models.Pagination
 import dev.gemmabcr.models.QueryCriteria
+import dev.gemmabcr.models.pokemons.Type
 import dev.gemmabcr.models.pokemons.todo.ToDo
 import io.ktor.http.Parameters
 import kotlin.text.toIntOrNull
@@ -12,7 +13,10 @@ class QueryCriteriaBuilder {
     private var name: String? = null
     private var number: Int? = null
     private var area: Area? = null
+    private var type: Type? = null
     private var toDo: ToDo? = null
+    private var onlyUncompleted: Boolean = false
+    private var onlyTeam: Boolean = false
     private var page: Int = 1
 
     fun with(toDos: List<ToDo>) = apply {
@@ -24,18 +28,30 @@ class QueryCriteriaBuilder {
         this.number = queryParameters[QueryCriteriaType.NUMBER.key()]?.toIntOrNull()
         val location = queryParameters[QueryCriteriaType.AREA.key()]
         this.area = Area.entries.firstOrNull { it.name == location }
-        this.toDo = ToDoBuilder()
-            .with(toDos)
-            .with(queryParameters[QueryCriteriaType.TO_DO.key()]?.toInt())
-            .build()
+        this.type = type(queryParameters)
+        this.toDo = toDo(queryParameters)
+        this.onlyUncompleted = queryParameters.contains(QueryCriteriaType.UNCOMPLETED.key())
+        this.onlyTeam = queryParameters.contains(QueryCriteriaType.TEAM.key())
         this.page = queryParameters[QueryCriteriaType.PAGE.key()]?.toInt() ?: 1
+    }
+
+    private fun toDo(queryParameters: Parameters): ToDo? = ToDoBuilder()
+        .with(toDos)
+        .with(queryParameters[QueryCriteriaType.TO_DO.key()]?.toInt())
+        .build()
+
+    private fun type(queryParameters: Parameters): Type? = queryParameters[QueryCriteriaType.TYPE.key()]?.let {
+        Type.entries.firstOrNull { type -> type.name == it }
     }
 
     fun build(): QueryCriteria = QueryCriteria(
         name,
         number,
         area,
+        type,
         toDo,
+        onlyUncompleted,
+        onlyTeam,
         Pagination(page)
     )
 }

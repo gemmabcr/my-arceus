@@ -1,6 +1,6 @@
 package database
 
-import dev.gemmabcr.database.ExposedDao
+import dev.gemmabcr.database.ExposedPokemonDao
 import dev.gemmabcr.database.tables.LocationsTable
 import dev.gemmabcr.database.tables.PokemonsTable
 import dev.gemmabcr.models.Pagination
@@ -16,8 +16,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class ExposedDaoTest {
-    private val dao = ExposedDao()
+class ExposedPokemonDaoTest {
+    private val dao = ExposedPokemonDao()
 
     @BeforeTest
     fun setup() {
@@ -75,38 +75,50 @@ class ExposedDaoTest {
 
     @Test
     fun givenDefaultCriteria_whenPokemonsRows() = runBlocking {
-        val result = dao.pokemons(QueryCriteria())
+        val result = dao.pokemons(QueryCriteria(), null)
 
-        assertEquals(3, result.size)
+        assertEquals(3, result.results.size)
+        assertEquals(false, result.hasNextPage)
     }
 
     @Test
     fun givenCriteriaWithArea_whenPokemons_thenReturnsCorrespondingRows() = runBlocking {
         val criteria = QueryCriteria(area = Area.MIRELANDS)
-        val result = dao.pokemons(criteria)
+        val result = dao.pokemons(criteria, null)
         
-        assertEquals(2, result.size)
-        assertTrue(result.any { it.name == "Geodude" })
-        assertTrue(result.any { it.name == "Onix" })
-        assertTrue(result.none { it.name == "Pikachu" })
+        assertEquals(2, result.results.size)
+        assertTrue(result.results.any { it.name == "Geodude" })
+        assertTrue(result.results.any { it.name == "Onix" })
+        assertTrue(result.results.none { it.name == "Pikachu" })
     }
 
     @Test
     fun givenCriteriaWithName_whenPokemons_thenReturnsCorrespondingRow() = runBlocking {
         val criteria = QueryCriteria(name = "pika")
-        val result = dao.pokemons(criteria)
+        val result = dao.pokemons(criteria, null)
         
-        assertEquals(1, result.size)
-        assertEquals("Pikachu", result.first().name)
+        assertEquals(1, result.results.size)
+        assertEquals("Pikachu", result.results.first().name)
+    }
+
+    @Test
+    fun givenCriteriaWithType_whenPokemons_thenReturnsCorrespondingRows() = runBlocking {
+        val criteria = QueryCriteria(type = Type.ROCK)
+        val result = dao.pokemons(criteria, null)
+
+        assertEquals(2, result.results.size)
+        assertTrue(result.results.any { it.name == "Geodude" })
+        assertTrue(result.results.any { it.name == "Onix" })
+        assertTrue(result.results.none { it.name == "Pikachu" })
     }
 
     @Test
     fun givenCriteriaWithNumber_whenPokemons_thenReturnsCorrespondingRow() = runBlocking {
         val criteria = QueryCriteria(number = 95)
-        val result = dao.pokemons(criteria)
+        val result = dao.pokemons(criteria, null)
 
-        assertEquals(1, result.size)
-        assertEquals("Onix", result.first().name)
+        assertEquals(1, result.results.size)
+        assertEquals("Onix", result.results.first().name)
     }
 
     @Test
@@ -135,23 +147,26 @@ class ExposedDaoTest {
         
         val pagination = Pagination(page = 1, pageSize = 3)
         val criteriaPage1 = QueryCriteria(pagination = pagination)
-        val resultPage1 = dao.pokemons(criteriaPage1)
+        val resultPage1 = dao.pokemons(criteriaPage1, null)
         
-        assertEquals(3, resultPage1.size, "Expected 3 items in page 1, but got ${resultPage1.size}")
-        assertEquals(25, resultPage1[0].id)
-        assertEquals(74, resultPage1[1].id)
-        assertEquals(95, resultPage1[2].id)
+        assertEquals(3, resultPage1.results.size, "Expected 3 items in page 1, but got ${resultPage1.results.size}")
+        assertTrue(resultPage1.hasNextPage)
+        assertEquals(25, resultPage1.results[0].id)
+        assertEquals(74, resultPage1.results[1].id)
+        assertEquals(95, resultPage1.results[2].id)
 
         val pagination2 = Pagination(page = 2, pageSize = 3)
         val criteriaPage2 = QueryCriteria(pagination = pagination2)
-        val resultPage2 = dao.pokemons(criteriaPage2)
-        assertEquals(3, resultPage2.size)
-        assertEquals(101, resultPage2[0].id)
+        val resultPage2 = dao.pokemons(criteriaPage2, null)
+        assertEquals(3, resultPage2.results.size)
+        assertTrue(resultPage2.hasNextPage)
+        assertEquals(101, resultPage2.results[0].id)
 
         val pagination3 = Pagination(page = 3, pageSize = 3)
         val criteriaPage3 = QueryCriteria(pagination = pagination3)
-        val resultPage3 = dao.pokemons(criteriaPage3)
-        assertEquals(2, resultPage3.size)
-        assertEquals(104, resultPage3[0].id)
+        val resultPage3 = dao.pokemons(criteriaPage3, null)
+        assertEquals(2, resultPage3.results.size)
+        assertEquals(false, resultPage3.hasNextPage)
+        assertEquals(104, resultPage3.results[0].id)
     }
 }

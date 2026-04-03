@@ -12,4 +12,5 @@ data class DetailedPokemon(
     override val toDos:  List<ProgressToDo>,
     val caughtCondition: CaughtCondition?,
     val evolutionChain: List<EvolutionChain>,
+    val inTeam: Boolean = false,
 ): BasePokemon

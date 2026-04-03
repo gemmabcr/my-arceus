@@ -8,4 +8,6 @@ interface BasePokemon {
     val name: String
     val types: List<Type>
     val toDos: List<ProgressToDo>
+
+    fun isUncompleted(): Boolean = toDos.any { it.completed().not() }
 }
