@@ -2,11 +2,10 @@ package dev.gemmabcr.views.adapters
 
 import dev.gemmabcr.models.pokemons.CaughtCondition
 import dev.gemmabcr.views.i18n.CaughtConditionI18nKey
-import dev.gemmabcr.views.i18n.I18nKey
 
 class CaughtConditionI18nKeyAdapter(private val type: CaughtCondition):
     I18nKeyAdapter {
-    override fun i18nKey(): I18nKey = when (type) {
+    override fun i18nKey(): CaughtConditionI18nKey = when (type) {
         CaughtCondition.AFTERNOON -> CaughtConditionI18nKey.AFTERNOON
         CaughtCondition.ALPHA -> CaughtConditionI18nKey.ALPHA
         CaughtCondition.AIR -> CaughtConditionI18nKey.AIR

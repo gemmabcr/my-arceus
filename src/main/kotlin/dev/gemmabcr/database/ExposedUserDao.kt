@@ -9,8 +9,10 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.insertIgnore
 import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.update
 
 class ExposedUserDao : UserDao {
     override suspend fun todos(user: Int): List<UserToDoDto> = DatabaseFactory.dbQuery {
@@ -30,6 +32,35 @@ class ExposedUserDao : UserDao {
         UserToDosTable.selectAll()
             .where(UserToDosTable.userId eq user and (UserToDosTable.pokemonId eq pokemonId))
             .map(::userToDoDto)
+    }
+
+    override suspend fun saveTodoProgress(
+        user: Int,
+        pokemonId: Int,
+        todoId: Int,
+        done: Int
+    ): Unit = DatabaseFactory.dbQuery {
+        val existingId = UserToDosTable.selectAll()
+            .where(
+                UserToDosTable.userId eq user and
+                        (UserToDosTable.pokemonId eq pokemonId) and
+                        (UserToDosTable.todoId eq todoId)
+            )
+            .singleOrNull()
+            ?.get(UserToDosTable.id)
+
+        when (existingId) {
+            null -> UserToDosTable.insert {
+                it[userId] = user
+                it[this.pokemonId] = pokemonId
+                it[this.todoId] = todoId
+                it[this.done] = done
+            }
+
+            else -> UserToDosTable.update({ UserToDosTable.id eq existingId }) {
+                it[UserToDosTable.done] = done
+            }
+        }
     }
 
     override suspend fun team(user: Int): List<UserTeamDto> = DatabaseFactory.dbQuery {

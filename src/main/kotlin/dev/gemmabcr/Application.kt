@@ -7,6 +7,8 @@ import dev.gemmabcr.database.FlywayFactory
 import dev.gemmabcr.database.ExposedPokemonDao
 import dev.gemmabcr.database.DatabaseFactory
 import dev.gemmabcr.database.ExposedUserDao
+import dev.gemmabcr.ocr.GameScreenshotOcrService
+import dev.gemmabcr.ocr.OcrTodoImportService
 import dev.gemmabcr.views.PageFactory
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
@@ -27,6 +29,8 @@ fun Application.module() {
     val config = ConfigFactory.load()
     FlywayFactory.migrate(config)
     DatabaseFactory.init(config)
+    val pokemonDao = ExposedPokemonDao()
+    val userDao = ExposedUserDao()
 
     install(createApplicationPlugin(name = "I18nPlugin") {
         on(CallSetup) { call ->
@@ -47,8 +51,10 @@ fun Application.module() {
     }
     PageFactory(
         Controller(
-            ExposedPokemonDao(),
-            ExposedUserDao()
-        )
+            pokemonDao,
+            userDao
+        ),
+        GameScreenshotOcrService(),
+        OcrTodoImportService(pokemonDao, userDao)
     ).create(this)
 }

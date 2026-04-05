@@ -64,6 +64,9 @@ class ListView(
                         "$disableEmptyFieldsScript; " +
                         "this.form.submit()"
             filtersForm(autoSubmit)
+            row(style = "flex-wrap: wrap;") {
+                buttonLink("/ocr", "Import screenshot stats")
+            }
             teamSection()
             val pokemons = result.results
             when {

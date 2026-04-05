@@ -8,6 +8,8 @@ interface UserDao {
 
     suspend fun todos(user: Int, pokemonId: Int): List<UserToDoDto>
 
+    suspend fun saveTodoProgress(user: Int, pokemonId: Int, todoId: Int, done: Int)
+
     suspend fun team(user: Int): List<UserTeamDto>
 
     suspend fun addPokemonToTeam(user: Int, pokemonId: Int)
