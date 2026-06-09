@@ -1,6 +1,7 @@
 package dev.gemmabcr.views
 
 import dev.gemmabcr.models.pokemons.Area
+import dev.gemmabcr.models.CompletionFilter
 import dev.gemmabcr.models.Pagination
 import dev.gemmabcr.models.QueryCriteria
 import dev.gemmabcr.models.pokemons.Type
@@ -15,7 +16,7 @@ class QueryCriteriaBuilder {
     private var area: Area? = null
     private var type: Type? = null
     private var toDo: ToDo? = null
-    private var onlyUncompleted: Boolean = false
+    private var completion: CompletionFilter = CompletionFilter.ALL
     private var onlyTeam: Boolean = false
     private var page: Int = 1
 
@@ -30,7 +31,7 @@ class QueryCriteriaBuilder {
         this.area = Area.entries.firstOrNull { it.name == location }
         this.type = type(queryParameters)
         this.toDo = toDo(queryParameters)
-        this.onlyUncompleted = queryParameters.contains(QueryCriteriaType.UNCOMPLETED.key())
+        this.completion = completion(queryParameters)
         this.onlyTeam = queryParameters.contains(QueryCriteriaType.TEAM.key())
         this.page = queryParameters[QueryCriteriaType.PAGE.key()]?.toInt() ?: 1
     }
@@ -44,14 +45,19 @@ class QueryCriteriaBuilder {
         Type.entries.firstOrNull { type -> type.name == it }
     }
 
+    private fun completion(queryParameters: Parameters): CompletionFilter =
+        queryParameters[QueryCriteriaType.COMPLETION.key()]?.let { value ->
+            CompletionFilter.entries.firstOrNull { it.name == value }
+        } ?: CompletionFilter.ALL
+
     fun build(): QueryCriteria = QueryCriteria(
-        name,
-        number,
-        area,
-        type,
-        toDo,
-        onlyUncompleted,
-        onlyTeam,
-        Pagination(page)
+        name = name,
+        number = number,
+        area = area,
+        type = type,
+        toDo = toDo,
+        completion = completion,
+        onlyTeam = onlyTeam,
+        pagination = Pagination(page)
     )
 }

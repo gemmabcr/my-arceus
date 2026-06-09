@@ -7,7 +7,9 @@ enum class CommonI18nKey : I18nKey {
     BACK,
     BASE_DEFEATED,
     BASE_SEARCH,
+    COMPLETE,
     COMPLETED,
+    COMPLETION,
     DESCRIPTION,
     DETAIL,
     EDIT,
@@ -25,11 +27,14 @@ enum class CommonI18nKey : I18nKey {
     OF,
     PREVIOUS,
     PROGRESS,
-    SHOW_ONLY_UNCOMPLETED,
+    RESULTS,
+    SHOWING,
     SPECIAL_CONDITION,
+    SUBMIT,
     TITLE,
     TYPE,
-    TODOS;
+    TODOS,
+    UNCOMPLETED;
 
     override fun itemName() = name
 }

@@ -79,6 +79,7 @@ class ExposedPokemonDaoTest {
 
         assertEquals(3, result.results.size)
         assertEquals(false, result.hasNextPage)
+        assertEquals(3, result.totalResults)
     }
 
     @Test
@@ -151,6 +152,7 @@ class ExposedPokemonDaoTest {
         
         assertEquals(3, resultPage1.results.size, "Expected 3 items in page 1, but got ${resultPage1.results.size}")
         assertTrue(resultPage1.hasNextPage)
+        assertEquals(8, resultPage1.totalResults)
         assertEquals(25, resultPage1.results[0].id)
         assertEquals(74, resultPage1.results[1].id)
         assertEquals(95, resultPage1.results[2].id)

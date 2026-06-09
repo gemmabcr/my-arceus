@@ -10,10 +10,11 @@ data class QueryCriteria(
     val area: Area? = null,
     val type: Type? = null,
     val toDo: ToDo? = null,
-    val onlyUncompleted: Boolean = false,
+    val completion: CompletionFilter = CompletionFilter.ALL,
     val onlyTeam: Boolean = false,
     val pagination: Pagination = Pagination()
 ) {
     fun isFiltered(): Boolean =
-        name.isNullOrBlank().not() || listOf(number, area, type, toDo).any { it != null } || onlyUncompleted || onlyTeam
+        name.isNullOrBlank().not() || listOf(number, area, type, toDo).any { it != null } ||
+                completion != CompletionFilter.ALL || onlyTeam
 }

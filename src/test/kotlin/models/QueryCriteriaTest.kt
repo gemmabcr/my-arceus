@@ -1,5 +1,6 @@
 package models
 
+import dev.gemmabcr.models.CompletionFilter
 import dev.gemmabcr.models.QueryCriteria
 import dev.gemmabcr.models.pokemons.Area
 import dev.gemmabcr.models.pokemons.Type
@@ -53,6 +54,13 @@ class QueryCriteriaTest {
     @Test
     fun givenOnlyTeam_whenIsFiltered_thenReturnsTrue() {
         val criteria = QueryCriteria(onlyTeam = true)
+
+        assertTrue(criteria.isFiltered())
+    }
+
+    @Test
+    fun givenCompletionFilter_whenIsFiltered_thenReturnsTrue() {
+        val criteria = QueryCriteria(completion = CompletionFilter.COMPLETED)
 
         assertTrue(criteria.isFiltered())
     }

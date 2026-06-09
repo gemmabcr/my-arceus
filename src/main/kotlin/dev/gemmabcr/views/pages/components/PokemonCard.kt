@@ -42,7 +42,7 @@ class PokemonCard(
                     PokemonImage(pokemon.generalId).create(this)
                     child()
                 }
-                ToDos(pokemon.toDos).create(this)
+                ToDos(pokemon.hisuiId, pokemon.toDos).create(this)
             }
         }
     }

@@ -1,5 +1,6 @@
 package dev.gemmabcr.views.pages
 
+import dev.gemmabcr.models.CompletionFilter
 import dev.gemmabcr.models.QueryCriteria
 import dev.gemmabcr.models.QueryResult
 import dev.gemmabcr.models.pokemons.Area
@@ -79,6 +80,7 @@ class ListView(
                 }
 
                 else -> {
+                    pagination()
                     result.results.forEach { pokemon ->
                         PokemonCard(pokemon).with {
                             row(JustifyContent.CENTER, style = "padding: 1rem;") {
@@ -87,14 +89,7 @@ class ListView(
                             }
                         }.create(this)
                     }
-                    row(JustifyContent.CENTER, gap = Gap.MAX) {
-                        if (criteria.pagination.page > 1) {
-                            paginationButton(translate(CommonI18nKey.PREVIOUS), criteria.pagination.page - 1)
-                        }
-                        if (result.hasNextPage) {
-                            paginationButton(translate(CommonI18nKey.NEXT), criteria.pagination.page + 1)
-                        }
-                    }
+                    pagination()
                 }
             }
         }
@@ -203,11 +198,12 @@ class ListView(
             value = criteria.toDo?.id?.toString() ?: "",
             onChange = autoSubmit
         )
-        checkBox(
-            translate(CommonI18nKey.SHOW_ONLY_UNCOMPLETED),
-            QueryCriteriaType.UNCOMPLETED.key(),
-            criteria.onlyUncompleted,
-            autoSubmit
+        selectInput(
+            translate(CommonI18nKey.COMPLETION),
+            QueryCriteriaType.COMPLETION.key(),
+            completionOptions(),
+            value = criteria.completion.name,
+            onChange = autoSubmit
         )
         checkBox(
             "Only my team",
@@ -229,6 +225,33 @@ class ListView(
 
     private fun toDoOptions(): Map<String, String> =
         mapOf("" to "") + todos.associate { it.id.toString() to ToDoTypeAdapter(it.description).text() }
+
+    private fun completionOptions(): Map<String, String> = mapOf(
+        CompletionFilter.ALL.name to translate(CommonI18nKey.ALL),
+        CompletionFilter.UNCOMPLETED.name to translate(CommonI18nKey.UNCOMPLETED),
+        CompletionFilter.COMPLETED.name to translate(CommonI18nKey.COMPLETE)
+    )
+
+    private fun DIV.pagination() {
+        val firstResult = criteria.pagination.offset.toInt() + 1
+        val lastResult = criteria.pagination.offset.toInt() + result.results.size
+        val summary = "${translate(CommonI18nKey.SHOWING)} $firstResult-$lastResult " +
+                "${translate(CommonI18nKey.OF)} ${result.totalResults} ${translate(CommonI18nKey.RESULTS)}"
+        column(align = AlignItems.CENTER, gap = Gap.MIN) {
+            p {
+                style = "margin: 0; color: ${Colors.DARK_BLUE};"
+                +summary
+            }
+            row(JustifyContent.CENTER, gap = Gap.MAX) {
+                if (criteria.pagination.page > 1) {
+                    paginationButton(translate(CommonI18nKey.PREVIOUS), criteria.pagination.page - 1)
+                }
+                if (result.hasNextPage) {
+                    paginationButton(translate(CommonI18nKey.NEXT), criteria.pagination.page + 1)
+                }
+            }
+        }
+    }
 
     private fun DIV.paginationButton(text: String, toPage: Int) {
         button(type = ButtonType.button) {

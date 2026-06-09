@@ -7,6 +7,7 @@ import kotlinx.html.FlowContent
 import kotlinx.html.button
 import kotlinx.html.form
 import kotlinx.html.id
+import kotlinx.html.onClick
 import kotlinx.html.onMouseOut
 import kotlinx.html.onMouseOver
 import kotlinx.html.onSubmit
@@ -29,6 +30,7 @@ fun DIV.form(
 fun FlowContent.button(
     text: String,
     type: ButtonType = ButtonType.button,
+    onClick: String? = null,
     style: String? = null,
     block: (kotlinx.html.BUTTON.() -> Unit)? = null
 ) {
@@ -43,6 +45,7 @@ fun FlowContent.button(
         onMouseOut =
             "this.style.backgroundColor='${Colors.CREAM}'; this.style.transform='translateY(0)';" +
                     " this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'"
+        onClick?.let { this.onClick = it }
         +text
         block?.invoke(this)
     }

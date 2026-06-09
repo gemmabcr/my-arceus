@@ -3,6 +3,7 @@ package dev.gemmabcr
 import com.typesafe.config.ConfigFactory
 import dev.gemmabcr.Serialization.jsonConfig
 import dev.gemmabcr.controllers.Controller
+import dev.gemmabcr.controllers.TodoProgressService
 import dev.gemmabcr.database.FlywayFactory
 import dev.gemmabcr.database.ExposedPokemonDao
 import dev.gemmabcr.database.DatabaseFactory
@@ -54,6 +55,7 @@ fun Application.module() {
             pokemonDao,
             userDao
         ),
+        TodoProgressService(pokemonDao, userDao),
         GameScreenshotOcrService(),
         OcrTodoImportService(pokemonDao, userDao)
     ).create(this)

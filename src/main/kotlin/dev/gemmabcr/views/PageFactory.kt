@@ -1,6 +1,7 @@
 package dev.gemmabcr.views
 
 import dev.gemmabcr.controllers.Controller
+import dev.gemmabcr.controllers.TodoProgressService
 import dev.gemmabcr.ocr.GameScreenshotOcrService
 import dev.gemmabcr.ocr.OcrTodoImportService
 import io.ktor.http.HttpHeaders
@@ -14,6 +15,7 @@ import io.ktor.server.routing.routing
 
 class PageFactory(
     private val controller: Controller,
+    private val todoProgressService: TodoProgressService,
     private val ocrService: GameScreenshotOcrService,
     private val ocrTodoImportService: OcrTodoImportService
 ) {
@@ -26,7 +28,7 @@ class PageFactory(
                 }
             }
             val views = listOf(
-                PokemonsView(controller),
+                PokemonsView(controller, todoProgressService),
                 TeamView(controller),
                 OcrView(ocrService, ocrTodoImportService)
             )

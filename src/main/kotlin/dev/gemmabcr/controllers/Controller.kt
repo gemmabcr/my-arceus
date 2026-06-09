@@ -3,6 +3,7 @@ package dev.gemmabcr.controllers
 import dev.gemmabcr.database.dtos.PokemonDto
 import dev.gemmabcr.database.dtos.ToDoDto
 import dev.gemmabcr.database.dtos.UserToDoDto
+import dev.gemmabcr.models.CompletionFilter
 import dev.gemmabcr.models.PokemonDao
 import dev.gemmabcr.models.Pagination
 import dev.gemmabcr.models.QueryCriteria
@@ -21,17 +22,18 @@ class Controller(
 ) {
     suspend fun pokemons(criteria: QueryCriteria, session: Session): QueryResult<Pokemon> {
         val userId = session.user
-        if (userId == null) {
+        if (userId == null && criteria.completion == CompletionFilter.ALL) {
             val result = pokemonDao.pokemons(criteria)
-            return QueryResult(result.results.map(::createPokemon), result.hasNextPage)
+            return QueryResult(result.results.map(::createPokemon), result.hasNextPage, result.totalResults)
         }
 
-        val result = when (criteria.onlyUncompleted) {
-            true -> allPokemons(criteria, userId)
-            false -> pokemonDao.pokemons(criteria, userId)
+        val result = when (criteria.completion) {
+            CompletionFilter.ALL -> pokemonDao.pokemons(criteria, userId)
+            else -> allPokemons(criteria, userId)
         }
-        val teamIds = userDao.team(userId).map { it.pokemonId }.toSet()
-        val userTodosMap: Map<Int, List<UserToDoDto>> = userDao.todos(userId).groupBy { it.pokemonId }
+        val teamIds = userId?.let { userDao.team(it).map { team -> team.pokemonId }.toSet() } ?: emptySet()
+        val userTodosMap: Map<Int, List<UserToDoDto>> =
+            userId?.let { userDao.todos(it).groupBy { todo -> todo.pokemonId } } ?: emptyMap()
 
         val pokemonsWithUserData = result.results.map(::createPokemon).map { pokemon ->
             val maybeTodos = userTodosMap[pokemon.hisuiId] ?: emptyList()
@@ -40,26 +42,27 @@ class Controller(
                 inTeam = teamIds.contains(pokemon.hisuiId)
             )
         }
-        val filteredPokemons = pokemonsWithUserData
-            .let { pokemons ->
-                if (criteria.onlyUncompleted) pokemons.filter { pokemon -> pokemon.isUncompleted() } else pokemons
-            }
+        val filteredPokemons = when (criteria.completion) {
+            CompletionFilter.ALL -> pokemonsWithUserData
+            CompletionFilter.UNCOMPLETED -> pokemonsWithUserData.filter { it.isUncompleted() }
+            CompletionFilter.COMPLETED -> pokemonsWithUserData.filter { it.isUncompleted().not() }
+        }
 
-        return when (criteria.onlyUncompleted) {
-            true -> {
+        return when (criteria.completion) {
+            CompletionFilter.ALL -> QueryResult(filteredPokemons, result.hasNextPage, result.totalResults)
+            else -> {
                 val fromIndex = criteria.pagination.offset.toInt().coerceAtMost(filteredPokemons.size)
                 val toIndex = (fromIndex + criteria.pagination.pageSize).coerceAtMost(filteredPokemons.size)
                 QueryResult(
                     results = filteredPokemons.subList(fromIndex, toIndex),
-                    hasNextPage = toIndex < filteredPokemons.size
+                    hasNextPage = toIndex < filteredPokemons.size,
+                    totalResults = filteredPokemons.size
                 )
             }
-
-            false -> QueryResult(filteredPokemons, result.hasNextPage)
         }
     }
 
-    private suspend fun allPokemons(criteria: QueryCriteria, userId: Int): QueryResult<PokemonDto> {
+    private suspend fun allPokemons(criteria: QueryCriteria, userId: Int?): QueryResult<PokemonDto> {
         val results = mutableListOf<PokemonDto>()
         var page = 1
 
@@ -70,7 +73,7 @@ class Controller(
             )
             results += currentResult.results
             if (!currentResult.hasNextPage) {
-                return QueryResult(results, false)
+                return QueryResult(results, false, results.size)
             }
             page++
         }

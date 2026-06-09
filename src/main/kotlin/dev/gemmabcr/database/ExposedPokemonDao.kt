@@ -36,9 +36,11 @@ class ExposedPokemonDao : PokemonDao {
                 .map { it[UserTeamsTable.pokemonId] }
         }
 
-        val pokemonRows = PokemonsTable.selectAll()
+        val filteredPokemonRows = PokemonsTable.selectAll()
             .orderBy(PokemonsTable.id)
             .filter { row -> QueryCriteriaPokemonsTable.filter(row, criteria, filterLocationIds, teamIds) }
+
+        val pokemonRows = filteredPokemonRows
             .drop(criteria.pagination.offset.toInt())
             .take(criteria.pagination.pageSize + 1)
 
@@ -46,7 +48,8 @@ class ExposedPokemonDao : PokemonDao {
             results = pokemonRows
                 .take(criteria.pagination.pageSize)
                 .map { pokemonDto(it) },
-            hasNextPage = pokemonRows.size > criteria.pagination.pageSize
+            hasNextPage = pokemonRows.size > criteria.pagination.pageSize,
+            totalResults = filteredPokemonRows.size
         )
     }
 

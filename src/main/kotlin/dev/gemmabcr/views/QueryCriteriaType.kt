@@ -8,7 +8,7 @@ enum class QueryCriteriaType {
     TO_DO,
     TYPE,
     TEAM,
-    UNCOMPLETED;
+    COMPLETION;
 
     fun key(): String = this.name.lowercase()
 }

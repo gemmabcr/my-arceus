@@ -39,7 +39,7 @@ class PokemonImage(private val id: Int) : View {
     }
 }
 
-private const val PAD_START_LENGTH = 3
+private const val PAD_START_LENGTH = 4
 private const val GROWLITHE = 58
 private const val ARCANINE = 59
 private const val VOLTORB = 100
