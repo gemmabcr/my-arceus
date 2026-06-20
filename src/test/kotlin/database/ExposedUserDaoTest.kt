@@ -1,8 +1,10 @@
 package database
 
+import dev.gemmabcr.database.ExposedAuthDao
 import dev.gemmabcr.database.ExposedUserDao
 import dev.gemmabcr.database.tables.LocationsTable
 import dev.gemmabcr.database.tables.PokemonsTable
+import dev.gemmabcr.database.tables.UsersTable
 import dev.gemmabcr.models.pokemons.Area
 import dev.gemmabcr.models.pokemons.Type
 import kotlinx.coroutines.runBlocking
@@ -15,6 +17,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class ExposedUserDaoTest {
+    private val authDao = ExposedAuthDao()
     private val dao = ExposedUserDao()
 
     @BeforeTest
@@ -30,6 +33,12 @@ class ExposedUserDaoTest {
 
     private fun insertTestData() {
         transaction {
+            UsersTable.insert {
+                it[UsersTable.id] = 1
+                it[UsersTable.email] = "player@example.com"
+                it[UsersTable.password] = "secret"
+            }
+
             val loc1Id = LocationsTable.insert {
                 it[LocationsTable.id] = 1
                 it[LocationsTable.name] = "Deertrack Path"
@@ -69,6 +78,22 @@ class ExposedUserDaoTest {
                 it[PokemonsTable.toDos] = mapOf()
             }
         }
+    }
+
+    @Test
+    fun givenUserCredentials_whenAuthenticating_thenCreatesAndClearsSessionTokenHash() = runBlocking {
+        val user = authDao.authenticate("player@example.com", "secret")
+
+        assertEquals(1, user)
+        assertEquals("player@example.com", authDao.profile(1)?.email)
+
+        authDao.saveSessionTokenHash(1, "token-hash")
+
+        assertEquals(1, authDao.userBySessionTokenHash("token-hash"))
+
+        authDao.clearSessionTokenHash("token-hash")
+
+        assertEquals(null, authDao.userBySessionTokenHash("token-hash"))
     }
 
     @Test

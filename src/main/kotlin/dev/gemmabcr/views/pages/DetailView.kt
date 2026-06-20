@@ -4,6 +4,7 @@ import dev.gemmabcr.models.pokemons.Area
 import dev.gemmabcr.models.pokemons.CaughtCondition
 import dev.gemmabcr.models.pokemons.DetailedPokemon
 import dev.gemmabcr.models.pokemons.Location
+import dev.gemmabcr.models.Session
 import dev.gemmabcr.views.adapters.AreaI18nKeyAdapter
 import dev.gemmabcr.views.adapters.CaughtConditionI18nKeyAdapter
 import dev.gemmabcr.views.i18n.CommonI18nKey
@@ -23,7 +24,10 @@ import kotlinx.html.FlowContent
 import kotlinx.html.p
 import kotlinx.html.style
 
-class DetailView(private val pokemon: DetailedPokemon) : HtmlLayout(CommonI18nKey.DETAIL) {
+class DetailView(
+    private val pokemon: DetailedPokemon,
+    private val session: Session,
+) : HtmlLayout(CommonI18nKey.DETAIL, session) {
     override fun DIV.content() {
         column(gap = Gap.MAX) {
             buttonLink("/", translate(CommonI18nKey.BACK))

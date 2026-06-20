@@ -27,38 +27,36 @@ class Controller(
             return QueryResult(result.results.map(::createPokemon), result.hasNextPage, result.totalResults)
         }
 
-        val result = when (criteria.completion) {
+        val result = pokemonResult(criteria, userId)
+        val pokemonsWithUserData = withUserData(result.results, userId)
+        val filteredPokemons = pokemonsWithUserData.filterByCompletion(criteria.completion)
+
+        return queryResult(criteria, result, filteredPokemons)
+    }
+
+    private suspend fun pokemonResult(
+        criteria: QueryCriteria,
+        userId: Int?,
+    ): QueryResult<PokemonDto> =
+        when (criteria.completion) {
             CompletionFilter.ALL -> pokemonDao.pokemons(criteria, userId)
             else -> allPokemons(criteria, userId)
         }
+
+    private suspend fun withUserData(
+        results: List<PokemonDto>,
+        userId: Int?,
+    ): List<Pokemon> {
         val teamIds = userId?.let { userDao.team(it).map { team -> team.pokemonId }.toSet() } ?: emptySet()
         val userTodosMap: Map<Int, List<UserToDoDto>> =
             userId?.let { userDao.todos(it).groupBy { todo -> todo.pokemonId } } ?: emptyMap()
 
-        val pokemonsWithUserData = result.results.map(::createPokemon).map { pokemon ->
+        return results.map(::createPokemon).map { pokemon ->
             val maybeTodos = userTodosMap[pokemon.hisuiId] ?: emptyList()
             pokemon.copy(
-                toDos = progressToDos(pokemon.toDos, maybeTodos),
+                toDos = mergeProgress(pokemon.toDos, maybeTodos),
                 inTeam = teamIds.contains(pokemon.hisuiId)
             )
-        }
-        val filteredPokemons = when (criteria.completion) {
-            CompletionFilter.ALL -> pokemonsWithUserData
-            CompletionFilter.UNCOMPLETED -> pokemonsWithUserData.filter { it.isUncompleted() }
-            CompletionFilter.COMPLETED -> pokemonsWithUserData.filter { it.isUncompleted().not() }
-        }
-
-        return when (criteria.completion) {
-            CompletionFilter.ALL -> QueryResult(filteredPokemons, result.hasNextPage, result.totalResults)
-            else -> {
-                val fromIndex = criteria.pagination.offset.toInt().coerceAtMost(filteredPokemons.size)
-                val toIndex = (fromIndex + criteria.pagination.pageSize).coerceAtMost(filteredPokemons.size)
-                QueryResult(
-                    results = filteredPokemons.subList(fromIndex, toIndex),
-                    hasNextPage = toIndex < filteredPokemons.size,
-                    totalResults = filteredPokemons.size
-                )
-            }
         }
     }
 
@@ -79,19 +77,6 @@ class Controller(
         }
     }
 
-    private fun createPokemon(dto: PokemonDto): Pokemon =
-        Pokemon(
-            dto.id,
-            dto.generalId,
-            dto.name,
-            dto.types,
-            toDos(dto.toDos)
-        )
-
-    private fun toDos(toDos: List<ToDoDto>): List<ProgressToDo> = toDos.map {
-        ProgressToDo(it.id, it.description, 0, it.goal)
-    }
-
     suspend fun toDos(): List<ToDo> = pokemonDao.todos()
 
     suspend fun pokemon(id: Int, session: Session): DetailedPokemon {
@@ -103,7 +88,7 @@ class Controller(
                 it.name,
                 it.types,
                 it.location.map { location -> Location(location.id, location.name, location.area) },
-                toDos(it.toDos),
+                progressToDos(it.toDos),
                 it.specialCondition,
                 emptyList()
             )
@@ -112,7 +97,7 @@ class Controller(
 
         val userTodos: List<UserToDoDto> = userDao.todos(userId, id)
         val isInTeam = userDao.team(userId).any { it.pokemonId == id }
-        return pokemon.copy(toDos = progressToDos(pokemon.toDos, userTodos), inTeam = isInTeam)
+        return pokemon.copy(toDos = mergeProgress(pokemon.toDos, userTodos), inTeam = isInTeam)
     }
 
     suspend fun team(session: Session): List<Pokemon> {
@@ -140,15 +125,54 @@ class Controller(
         userDao.removePokemonFromTeam(userId, pokemonId)
     }
 
-    private fun progressToDos(
-        toDos: List<ProgressToDo>,
-        userTodos: List<UserToDoDto>
-    ): List<ProgressToDo> = toDos.map { toDo ->
-        val progressToDo = userTodos.firstOrNull { it.todoId == toDo.id }
-        when (progressToDo) {
-            null -> toDo
-            else -> toDo.copy(done = progressToDo.done)
-        }
+}
+
+private fun createPokemon(dto: PokemonDto): Pokemon =
+    Pokemon(
+        dto.id,
+        dto.generalId,
+        dto.name,
+        dto.types,
+        progressToDos(dto.toDos)
+    )
+
+private fun progressToDos(toDos: List<ToDoDto>): List<ProgressToDo> = toDos.map {
+    ProgressToDo(it.id, it.description, 0, it.goal)
+}
+
+private fun List<Pokemon>.filterByCompletion(completionFilter: CompletionFilter): List<Pokemon> =
+    when (completionFilter) {
+        CompletionFilter.ALL -> this
+        CompletionFilter.UNCOMPLETED -> filter { it.isUncompleted() }
+        CompletionFilter.COMPLETED -> filter { it.isUncompleted().not() }
+    }
+
+private fun queryResult(
+    criteria: QueryCriteria,
+    result: QueryResult<PokemonDto>,
+    filteredPokemons: List<Pokemon>,
+): QueryResult<Pokemon> {
+    if (criteria.completion == CompletionFilter.ALL) {
+        return QueryResult(filteredPokemons, result.hasNextPage, result.totalResults)
+    }
+
+    val fromIndex = criteria.pagination.offset.toInt().coerceAtMost(filteredPokemons.size)
+    val toIndex = (fromIndex + criteria.pagination.pageSize).coerceAtMost(filteredPokemons.size)
+    return QueryResult(
+        results = filteredPokemons.subList(fromIndex, toIndex),
+        hasNextPage = toIndex < filteredPokemons.size,
+        totalResults = filteredPokemons.size
+    )
+}
+
+private fun mergeProgress(
+    toDos: List<ProgressToDo>,
+    userTodos: List<UserToDoDto>
+): List<ProgressToDo> = toDos.map { toDo ->
+    val progressToDo = userTodos.firstOrNull { it.todoId == toDo.id }
+    when (progressToDo) {
+        null -> toDo
+        else -> toDo.copy(done = progressToDo.done)
     }
 }
 

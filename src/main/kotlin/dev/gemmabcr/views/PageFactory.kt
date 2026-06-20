@@ -2,8 +2,10 @@ package dev.gemmabcr.views
 
 import dev.gemmabcr.controllers.Controller
 import dev.gemmabcr.controllers.TodoProgressService
+import dev.gemmabcr.models.AuthDao
 import dev.gemmabcr.ocr.GameScreenshotOcrService
 import dev.gemmabcr.ocr.OcrTodoImportService
+import dev.gemmabcr.security.SessionTokenService
 import io.ktor.http.HttpHeaders
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -15,9 +17,11 @@ import io.ktor.server.routing.routing
 
 class PageFactory(
     private val controller: Controller,
+    private val authDao: AuthDao,
     private val todoProgressService: TodoProgressService,
     private val ocrService: GameScreenshotOcrService,
-    private val ocrTodoImportService: OcrTodoImportService
+    private val ocrTodoImportService: OcrTodoImportService,
+    private val sessionTokenService: SessionTokenService,
 ) {
     fun create(application: Application) {
         application.routing {
@@ -28,9 +32,10 @@ class PageFactory(
                 }
             }
             val views = listOf(
-                PokemonsView(controller, todoProgressService),
-                TeamView(controller),
-                OcrView(ocrService, ocrTodoImportService)
+                LoginView(authDao, sessionTokenService),
+                PokemonsView(controller, todoProgressService, sessionTokenService),
+                TeamView(controller, sessionTokenService),
+                OcrView(ocrService, ocrTodoImportService, sessionTokenService),
             )
             views.forEach { it.create(application) }
 

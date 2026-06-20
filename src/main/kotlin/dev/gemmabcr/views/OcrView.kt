@@ -3,85 +3,118 @@ package dev.gemmabcr.views
 import dev.gemmabcr.ocr.GameScreenshotOcrService
 import dev.gemmabcr.ocr.OcrMatchedToDo
 import dev.gemmabcr.ocr.OcrTodoImportService
+import dev.gemmabcr.models.Session
+import dev.gemmabcr.security.SessionTokenService
 import dev.gemmabcr.views.pages.OcrPage
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.PartData
 import io.ktor.http.content.forEachPart
 import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
 import io.ktor.server.html.respondHtmlTemplate
 import io.ktor.server.request.receiveMultipart
 import io.ktor.server.request.receiveParameters
+import io.ktor.server.response.respond
+import io.ktor.server.response.respondRedirect
+import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
-import io.ktor.server.response.respondRedirect
 import io.ktor.utils.io.core.readBytes
 
 class OcrView(
     private val ocrService: GameScreenshotOcrService,
-    private val ocrTodoImportService: OcrTodoImportService
+    private val ocrTodoImportService: OcrTodoImportService,
+    private val sessionTokenService: SessionTokenService,
 ) : View {
     override fun create(application: Application) {
         application.routing {
-            route("/ocr") {
-                get {
-                    call.respondHtmlTemplate(OcrPage()) {}
+            ocrRoutes()
+            importRoutes()
+        }
+    }
+
+    private fun Route.ocrRoutes() {
+        route("/ocr") {
+            get {
+                val session = call.createSession(sessionTokenService)
+                if (session.user == null) {
+                    call.respondRedirect("/login")
+                    return@get
                 }
-                post {
-                    var imageBytes: ByteArray? = null
-                    var originalFileName = "screenshot.png"
-
-                    call.receiveMultipart().forEachPart { part ->
-                        when (part) {
-                            is PartData.FileItem -> {
-                                if (part.name == "screenshot") {
-                                    imageBytes = part.provider().readBytes()
-                                    originalFileName = part.originalFileName ?: originalFileName
-                                }
-                            }
-
-                            else -> Unit
-                        }
-                        part.dispose()
-                    }
-
-                    val result = try {
-                        imageBytes?.let { bytes -> ocrService.extractPokedexProgress(bytes, originalFileName) }
-                    } catch (exception: IllegalStateException) {
-                        call.respondHtmlTemplate(OcrPage(error = exception.message)) {}
-                        return@post
-                    }
-
-                    when {
-                        result == null -> call.respondHtmlTemplate(
-                            OcrPage(error = "Need image to execute OCR.")
-                        ) {}
-
-                        else -> {
-                            val preview = ocrTodoImportService.buildPreview(result, createSession())
-                            call.respondHtmlTemplate(OcrPage(result = result, importPreview = preview)) {}
-                        }
-                    }
-                }
+                call.respondHtmlTemplate(OcrPage(session = session)) {}
             }
+            post {
+                val session = call.requireSession() ?: return@post
+                call.respondOcrResult(session, call.receiveScreenshot())
+            }
+        }
+    }
 
-            route("/ocr/import") {
-                post {
-                    val parameters = call.receiveParameters()
-                    val pokemonId = parameters["pokemonId"]?.toIntOrNull()
-                    val updates = parameters.getAll("todoUpdate").orEmpty().mapNotNull(::toMatchedTodo)
+    private fun Route.importRoutes() {
+        route("/ocr/import") {
+            post {
+                val session = call.requireSession() ?: return@post
+                val parameters = call.receiveParameters()
+                val pokemonId = parameters["pokemonId"]?.toIntOrNull()
+                val updates = parameters.getAll("todoUpdate").orEmpty().mapNotNull(::toMatchedTodo)
 
-                    when {
-                        pokemonId == null || updates.isEmpty() -> call.respondRedirect("/ocr")
-                        else -> {
-                            ocrTodoImportService.importToDos(pokemonId, updates, createSession())
-                            call.respondRedirect("/pokemons/$pokemonId")
-                        }
+                when {
+                    pokemonId == null || updates.isEmpty() -> call.respondRedirect("/ocr")
+                    else -> {
+                        ocrTodoImportService.importToDos(pokemonId, updates, session)
+                        call.respondRedirect("/pokemons/$pokemonId")
                     }
                 }
             }
         }
+    }
+
+    private suspend fun ApplicationCall.requireSession(): Session? {
+        val session = createSession(sessionTokenService)
+        if (session.user == null) {
+            respond(HttpStatusCode.Unauthorized)
+            return null
+        }
+        return session
+    }
+
+    private suspend fun ApplicationCall.receiveScreenshot(): UploadedScreenshot {
+        var screenshot = UploadedScreenshot()
+        receiveMultipart().forEachPart { part ->
+            if (part is PartData.FileItem && part.name == "screenshot") {
+                screenshot = UploadedScreenshot(
+                    imageBytes = part.provider().readBytes(),
+                    originalFileName = part.originalFileName ?: screenshot.originalFileName,
+                )
+            }
+            part.dispose()
+        }
+        return screenshot
+    }
+
+    private suspend fun ApplicationCall.respondOcrResult(
+        session: Session,
+        screenshot: UploadedScreenshot,
+    ) {
+        val result = try {
+            screenshot.imageBytes?.let { bytes ->
+                ocrService.extractPokedexProgress(bytes, screenshot.originalFileName)
+            }
+        } catch (exception: IllegalStateException) {
+            respondHtmlTemplate(OcrPage(error = exception.message, session = session)) {}
+            return
+        }
+
+        if (result == null) {
+            respondHtmlTemplate(OcrPage(error = "Need image to execute OCR.", session = session)) {}
+            return
+        }
+
+        val preview = ocrTodoImportService.buildPreview(result, session)
+        respondHtmlTemplate(OcrPage(result = result, importPreview = preview, session = session)) {}
     }
 
     private fun toMatchedTodo(value: String): OcrMatchedToDo? {
@@ -100,6 +133,11 @@ class OcrView(
         }
     }
 }
+
+private data class UploadedScreenshot(
+    val imageBytes: ByteArray? = null,
+    val originalFileName: String = "screenshot.png",
+)
 
 private const val OCR_TODO_PARTS = 5
 private const val TODO_UPDATE_SEPARATOR = "::"

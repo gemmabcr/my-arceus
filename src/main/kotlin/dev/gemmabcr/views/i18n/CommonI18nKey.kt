@@ -26,6 +26,7 @@ enum class CommonI18nKey : I18nKey {
     NUMBER,
     OF,
     PREVIOUS,
+    PROFILE,
     PROGRESS,
     RESULTS,
     SHOWING,

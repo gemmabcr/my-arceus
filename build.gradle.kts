@@ -12,7 +12,7 @@ plugins {
 }
 
 application {
-    mainClass.set("ApplicationKt")
+    mainClass.set("dev.gemmabcr.ApplicationKt")
 }
 
 kotlin {

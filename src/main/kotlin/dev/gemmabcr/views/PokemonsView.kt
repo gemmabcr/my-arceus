@@ -2,15 +2,18 @@ package dev.gemmabcr.views
 
 import dev.gemmabcr.controllers.Controller
 import dev.gemmabcr.controllers.TodoProgressService
+import dev.gemmabcr.security.SessionTokenService
 import dev.gemmabcr.views.pages.DetailView
 import dev.gemmabcr.views.pages.ListView
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.Parameters
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.html.respondHtmlTemplate
 import io.ktor.server.request.receiveParameters
 import io.ktor.server.request.uri
+import io.ktor.server.response.respond
 import io.ktor.server.response.respondRedirect
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
@@ -20,7 +23,8 @@ import kotlin.text.toInt
 
 class PokemonsView(
     private val controller: Controller,
-    private val todoProgressService: TodoProgressService
+    private val todoProgressService: TodoProgressService,
+    private val sessionTokenService: SessionTokenService,
 ) : View {
     override fun create(application: Application) {
         application.routing {
@@ -29,17 +33,23 @@ class PokemonsView(
                     val parameters: Parameters = call.request.queryParameters
                     val todos = controller.toDos()
                     val criteria = QueryCriteriaBuilder().with(todos).with(parameters).build()
-                    val session = createSession()
+                    val session = call.createSession(sessionTokenService)
                     val result = controller.pokemons(criteria, session)
                     val team = controller.team(session)
-                    call.respondHtmlTemplate(ListView(criteria, result, todos, team, call.request.uri)) {}
+                    call.respondHtmlTemplate(ListView(criteria, result, todos, team, call.request.uri, session)) {}
                 }
                 get("/{id}") {
                     val id = call.parameters["id"]!!.toInt()
-                    val pokemon = controller.pokemon(id, createSession())
-                    call.respondHtmlTemplate(DetailView(pokemon)) {}
+                    val session = call.createSession(sessionTokenService)
+                    val pokemon = controller.pokemon(id, session)
+                    call.respondHtmlTemplate(DetailView(pokemon, session)) {}
                 }
                 post("/{id}/todos") {
+                    val session = call.createSession(sessionTokenService)
+                    if (session.user == null) {
+                        call.respond(HttpStatusCode.Unauthorized)
+                        return@post
+                    }
                     val id = call.parameters["id"]!!.toInt()
                     val parameters = call.receiveParameters()
                     val updates = parameters.names()
@@ -54,7 +64,7 @@ class PokemonsView(
                     todoProgressService.update(
                         id,
                         updates,
-                        createSession()
+                        session
                     )
 
                     val referrer = call.request.headers[HttpHeaders.Referrer] ?: "/pokemons/$id"

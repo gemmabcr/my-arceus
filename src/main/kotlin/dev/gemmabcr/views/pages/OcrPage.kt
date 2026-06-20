@@ -2,6 +2,7 @@ package dev.gemmabcr.views.pages
 
 import dev.gemmabcr.ocr.OcrTodoImportPreview
 import dev.gemmabcr.ocr.PokedexScreenshotOcrResult
+import dev.gemmabcr.models.Session
 import dev.gemmabcr.views.i18n.CommonI18nKey
 import dev.gemmabcr.views.ui.Colors
 import dev.gemmabcr.views.ui.HtmlLayout
@@ -24,8 +25,9 @@ import kotlinx.html.style
 class OcrPage(
     private val result: PokedexScreenshotOcrResult? = null,
     private val importPreview: OcrTodoImportPreview? = null,
-    private val error: String? = null
-) : HtmlLayout(CommonI18nKey.LIST) {
+    private val error: String? = null,
+    private val session: Session = Session(),
+) : HtmlLayout(CommonI18nKey.LIST, session) {
     private val ocrDescription =
         "Puja una pantalla de tasques de la Pokédex i intentarem extreure el Pokémon, " +
                 "el número, el progrés i les files visibles."

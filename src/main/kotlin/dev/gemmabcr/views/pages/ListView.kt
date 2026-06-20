@@ -3,6 +3,7 @@ package dev.gemmabcr.views.pages
 import dev.gemmabcr.models.CompletionFilter
 import dev.gemmabcr.models.QueryCriteria
 import dev.gemmabcr.models.QueryResult
+import dev.gemmabcr.models.Session
 import dev.gemmabcr.models.pokemons.Area
 import dev.gemmabcr.models.pokemons.Pokemon
 import dev.gemmabcr.models.pokemons.Type
@@ -50,13 +51,15 @@ class ListView(
     private val todos: List<ToDo>,
     private val team: List<Pokemon>,
     private val redirectTo: String,
+    private val session: Session,
 ) :
-    HtmlLayout(CommonI18nKey.LIST) {
+    HtmlLayout(CommonI18nKey.LIST, session) {
     private val disableEmptyFieldsScript = "Array.from(this.form.elements)" +
             ".forEach(e=>{if(e.name&&!e.value)e.disabled=true})"
     private val disableEmptyFieldsByFormIdScript =
         "Array.from(document.getElementById('filter-form').elements)" +
                 ".forEach(e=>{if(e.name&&!e.value)e.disabled=true})"
+    private val isLoggedIn = session.user != null
 
     override fun DIV.content() {
         column(gap = Gap.MAX) {
@@ -65,10 +68,14 @@ class ListView(
                         "$disableEmptyFieldsScript; " +
                         "this.form.submit()"
             filtersForm(autoSubmit)
-            row(style = "flex-wrap: wrap;") {
-                buttonLink("/ocr", "Import screenshot stats")
+            if (isLoggedIn) {
+                row(style = "flex-wrap: wrap;") {
+                    buttonLink("/ocr", "Puja el teu proces")
+                }
             }
-            teamSection()
+            if (isLoggedIn) {
+                teamSection()
+            }
             val pokemons = result.results
             when {
                 pokemons.isEmpty() -> row(JustifyContent.CENTER) {
@@ -84,7 +91,9 @@ class ListView(
                     result.results.forEach { pokemon ->
                         PokemonCard(pokemon).with {
                             row(JustifyContent.CENTER, style = "padding: 1rem;") {
-                                teamButton(pokemon)
+                                if (isLoggedIn) {
+                                    teamButton(pokemon)
+                                }
                                 buttonLink("/pokemons/${pokemon.hisuiId}", translate(CommonI18nKey.MORE_INFO))
                             }
                         }.create(this)
@@ -99,9 +108,10 @@ class ListView(
         column(
             gap = Gap.MIN,
             style =
-                "background-color: ${Colors.CREAM}; padding: 1rem; border-radius: 1rem; " +
-                        "box-shadow: rgba(0, 0, 0, 0.12) 0 1px 3px;"
+                "background-color: white; padding: 1rem; border-radius: 8px; " +
+                        "border: 1px solid ${Colors.CREAM}; box-shadow: rgba(0, 0, 0, 0.08) 0 1px 3px;"
         ) {
+            id = "my-team"
             h3 {
                 style = "margin: 0; color: ${Colors.DARK_BLUE};"
                 +"My team (${team.size}/6)"
@@ -128,13 +138,13 @@ class ListView(
             hiddenInput(name = "redirectTo") { this.value = redirectTo }
             hiddenInput(name = "action") { this.value = if (pokemon.inTeam) "remove" else "add" }
             val disabled = team.size >= TEAM_SIZE && pokemon.inTeam.not()
-            val styleButton = if (disabled) "$style opacity: 0.5; cursor: not-allowed;" else style
+            val styleButton = if (disabled) "opacity: 0.5; cursor: not-allowed;" else null
             actionButton(
                 text = if (pokemon.inTeam) "Remove from team" else "Add to team",
                 type = ButtonType.submit,
                 style = styleButton
             ) {
-              //  this.disabled = disabled
+                this.disabled = disabled
             }
         }
     }
@@ -205,12 +215,14 @@ class ListView(
             value = criteria.completion.name,
             onChange = autoSubmit
         )
-        checkBox(
-            "Only my team",
-            QueryCriteriaType.TEAM.key(),
-            criteria.onlyTeam,
-            autoSubmit
-        )
+        if (isLoggedIn) {
+            checkBox(
+                "Only my team",
+                QueryCriteriaType.TEAM.key(),
+                criteria.onlyTeam,
+                autoSubmit
+            )
+        }
     }
 
     private fun areaOptions(): Map<String, String> =
@@ -237,33 +249,57 @@ class ListView(
         val lastResult = criteria.pagination.offset.toInt() + result.results.size
         val summary = "${translate(CommonI18nKey.SHOWING)} $firstResult-$lastResult " +
                 "${translate(CommonI18nKey.OF)} ${result.totalResults} ${translate(CommonI18nKey.RESULTS)}"
-        column(align = AlignItems.CENTER, gap = Gap.MIN) {
+        row(
+            JustifyContent.SPACE_BETWEEN,
+            AlignItems.CENTER,
+            style =
+                "background-color: white; border: 1px solid ${Colors.CREAM}; border-radius: 8px; " +
+                        "padding: 0.75rem 1rem; flex-wrap: wrap;"
+        ) {
             p {
-                style = "margin: 0; color: ${Colors.DARK_BLUE};"
+                style = "margin: 0; color: ${Colors.DARK_BLUE}; font-weight: 700;"
                 +summary
             }
-            row(JustifyContent.CENTER, gap = Gap.MAX) {
+            row(JustifyContent.CENTER, AlignItems.CENTER, gap = Gap.MIN) {
                 if (criteria.pagination.page > 1) {
-                    paginationButton(translate(CommonI18nKey.PREVIOUS), criteria.pagination.page - 1)
+                    paginationButton(
+                        translate(CommonI18nKey.PREVIOUS),
+                        criteria.pagination.page - 1,
+                        disableEmptyFieldsByFormIdScript,
+                    )
+                }
+                p {
+                    style =
+                        "margin: 0; color: ${Colors.DARKEST_BLUE}; background-color: ${Colors.CREAM_LIGHEST}; " +
+                                "border-radius: 999px; padding: 0.45rem 0.75rem; font-weight: 700;"
+                    +"Page ${criteria.pagination.page}"
                 }
                 if (result.hasNextPage) {
-                    paginationButton(translate(CommonI18nKey.NEXT), criteria.pagination.page + 1)
+                    paginationButton(
+                        translate(CommonI18nKey.NEXT),
+                        criteria.pagination.page + 1,
+                        disableEmptyFieldsByFormIdScript,
+                    )
                 }
             }
         }
     }
+}
 
-    private fun DIV.paginationButton(text: String, toPage: Int) {
-        button(type = ButtonType.button) {
-            style =
-                "background-color: ${Colors.CREAM}; border: none; padding: 0.5rem 1rem; " +
-                        "border-radius: 4px; cursor: pointer; font-weight: bold; color: ${Colors.DARK_BLUE};"
-            this.onClick =
-                "document.getElementById('page-input').value = '${toPage}'; " +
-                        "$disableEmptyFieldsByFormIdScript; " +
-                        "document.getElementById('filter-form').submit()"
-            +text
-        }
+private fun DIV.paginationButton(
+    text: String,
+    toPage: Int,
+    disableEmptyFieldsScript: String,
+) {
+    button(type = ButtonType.button) {
+        style =
+            "background-color: ${Colors.DARK_BLUE}; border: none; padding: 0.5rem 0.85rem; " +
+                    "border-radius: 8px; cursor: pointer; font-weight: bold; color: ${Colors.ON_DARK_BLUE};"
+        this.onClick =
+            "document.getElementById('page-input').value = '${toPage}'; " +
+                    "$disableEmptyFieldsScript; " +
+                    "document.getElementById('filter-form').submit()"
+        +text
     }
 }
 

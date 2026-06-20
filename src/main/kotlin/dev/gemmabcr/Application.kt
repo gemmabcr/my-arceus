@@ -4,12 +4,14 @@ import com.typesafe.config.ConfigFactory
 import dev.gemmabcr.Serialization.jsonConfig
 import dev.gemmabcr.controllers.Controller
 import dev.gemmabcr.controllers.TodoProgressService
+import dev.gemmabcr.database.ExposedAuthDao
 import dev.gemmabcr.database.FlywayFactory
 import dev.gemmabcr.database.ExposedPokemonDao
 import dev.gemmabcr.database.DatabaseFactory
 import dev.gemmabcr.database.ExposedUserDao
 import dev.gemmabcr.ocr.GameScreenshotOcrService
 import dev.gemmabcr.ocr.OcrTodoImportService
+import dev.gemmabcr.security.SessionTokenService
 import dev.gemmabcr.views.PageFactory
 import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
@@ -32,6 +34,8 @@ fun Application.module() {
     DatabaseFactory.init(config)
     val pokemonDao = ExposedPokemonDao()
     val userDao = ExposedUserDao()
+    val authDao = ExposedAuthDao()
+    val sessionTokenService = SessionTokenService(authDao)
 
     install(createApplicationPlugin(name = "I18nPlugin") {
         on(CallSetup) { call ->
@@ -55,8 +59,10 @@ fun Application.module() {
             pokemonDao,
             userDao
         ),
+        authDao,
         TodoProgressService(pokemonDao, userDao),
         GameScreenshotOcrService(),
-        OcrTodoImportService(pokemonDao, userDao)
+        OcrTodoImportService(pokemonDao, userDao),
+        sessionTokenService,
     ).create(this)
 }
