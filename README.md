@@ -42,12 +42,26 @@ The project includes a `docker-compose.yml` file that starts:
 - A PostgreSQL database
 - The application container
 
-First, build and start the containers:
+Create a local environment file, replace its example password, then build and
+start the containers:
 
 ```bash
-docker-compose build
-docker-compose up
+cp .env.example .env
+docker compose up -d --build
 ```
+
+The application is available at http://127.0.0.1:8080. PostgreSQL data is kept
+in a named Docker volume and its port is not published to the host.
+
+Check the deployment with:
+
+```bash
+docker compose ps
+curl --fail http://127.0.0.1:8080/pokemons
+```
+
+On a production server, keep port 8080 private and expose the application
+through an HTTPS reverse proxy such as Nginx or Caddy.
 
 #### Option 2: Run locally without Docker
 

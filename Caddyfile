@@ -1,0 +1,8 @@
+my-arceus.com {
+    encode zstd gzip
+    reverse_proxy app:8080
+}
+
+www.my-arceus.com {
+    redir https://my-arceus.com{uri} permanent
+}

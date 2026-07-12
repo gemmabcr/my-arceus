@@ -41,11 +41,11 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-core:0.51.1")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.51.1")
     implementation("org.jetbrains.exposed:exposed-dao:0.51.1")
-    implementation("org.jetbrains.exposed:exposed-json:0.51.1") // Added for potential future JSON support matching upgrade
+    implementation("org.jetbrains.exposed:exposed-json:0.51.1")
 
-    implementation("org.postgresql:postgresql:42.7.1")
-    implementation("org.flywaydb:flyway-core:9.22.3")
-    implementation("org.flywaydb:flyway-database-postgresql:10.15.0")
+    implementation("org.postgresql:postgresql:42.7.13")
+    implementation("org.flywaydb:flyway-core:12.10.0")
+    implementation("org.flywaydb:flyway-database-postgresql:12.10.0")
 }
 
 detekt {
