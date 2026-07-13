@@ -35,6 +35,8 @@ import kotlinx.html.DIV
 import kotlinx.html.FlowContent
 import kotlinx.html.FormMethod
 import kotlinx.html.button
+import kotlinx.html.classes
+import kotlinx.html.div
 import kotlinx.html.form
 import kotlinx.html.h3
 import kotlinx.html.hiddenInput
@@ -51,7 +53,7 @@ class ListView(
     private val todos: List<ToDo>,
     private val team: List<Pokemon>,
     private val redirectTo: String,
-    private val session: Session,
+    session: Session,
 ) :
     HtmlLayout(CommonI18nKey.LIST, session) {
     private val disableEmptyFieldsScript = "Array.from(this.form.elements)" +
@@ -62,43 +64,52 @@ class ListView(
     private val isLoggedIn = session.user != null
 
     override fun DIV.content() {
-        column(gap = Gap.MAX) {
-            val autoSubmit =
-                "document.getElementById('page-input').value='1'; " +
-                        "$disableEmptyFieldsScript; " +
-                        "this.form.submit()"
-            filtersForm(autoSubmit)
-            if (isLoggedIn) {
-                row(style = "flex-wrap: wrap;") {
-                    buttonLink("/ocr", "Puja el teu proces")
-                }
+        val autoSubmit =
+            "document.getElementById('page-input').value='1'; " +
+                    "$disableEmptyFieldsScript; " +
+                    "this.form.submit()"
+        div {
+            classes = setOf("pokemon-list-layout")
+            div {
+                classes = setOf("pokemon-filter-sidebar")
+                filtersForm(autoSubmit)
             }
-            if (isLoggedIn) {
-                teamSection()
-            }
-            val pokemons = result.results
-            when {
-                pokemons.isEmpty() -> row(JustifyContent.CENTER) {
-                    p { +translate(CommonI18nKey.NO_RESULTS) }
-                    img(src = ImageSource.NO_RESULT.url) {
-                        height = "120"
-                        width = "120"
+            column(gap = Gap.MAX, style = "min-width: 0; width: 100%;") {
+                if (isLoggedIn) {
+                    row(style = "flex-wrap: wrap;") {
+                        buttonLink("/ocr", translate(CommonI18nKey.UPLOAD_PROGRESS))
                     }
                 }
+                if (isLoggedIn) {
+                    teamSection()
+                }
+                val pokemons = result.results
+                when {
+                    pokemons.isEmpty() -> row(JustifyContent.CENTER) {
+                        p { +translate(CommonI18nKey.NO_RESULTS) }
+                        img(src = ImageSource.NO_RESULT.url) {
+                            height = "120"
+                            width = "120"
+                        }
+                    }
 
-                else -> {
-                    pagination()
-                    result.results.forEach { pokemon ->
-                        PokemonCard(pokemon).with {
-                            row(JustifyContent.CENTER, style = "padding: 1rem;") {
-                                if (isLoggedIn) {
-                                    teamButton(pokemon)
+                    else -> {
+                        pagination()
+                        result.results.forEach { pokemon ->
+                            PokemonCard(pokemon).with {
+                                row(JustifyContent.CENTER, style = "padding: 1rem;") {
+                                    if (isLoggedIn) {
+                                        teamButton(pokemon)
+                                    }
+                                    buttonLink(
+                                        "/pokemons/${pokemon.hisuiId}",
+                                        translate(CommonI18nKey.MORE_INFO)
+                                    )
                                 }
-                                buttonLink("/pokemons/${pokemon.hisuiId}", translate(CommonI18nKey.MORE_INFO))
-                            }
-                        }.create(this)
+                            }.create(this)
+                        }
+                        pagination()
                     }
-                    pagination()
                 }
             }
         }
@@ -114,12 +125,12 @@ class ListView(
             id = "my-team"
             h3 {
                 style = "margin: 0; color: ${Colors.DARK_BLUE};"
-                +"My team (${team.size}/6)"
+                +"${translate(CommonI18nKey.MY_TEAM)} (${team.size}/6)"
             }
             when {
                 team.isEmpty() -> p {
                     style = "margin: 0; color: ${Colors.DARK_BLUE};"
-                    +"Select up to 6 pokemon from the list."
+                    +translate(CommonI18nKey.SELECT_TEAM)
                 }
 
                 else -> row(style = "flex-wrap: wrap;") {
@@ -140,7 +151,7 @@ class ListView(
             val disabled = team.size >= TEAM_SIZE && pokemon.inTeam.not()
             val styleButton = if (disabled) "opacity: 0.5; cursor: not-allowed;" else null
             actionButton(
-                text = if (pokemon.inTeam) "Remove from team" else "Add to team",
+                text = translate(if (pokemon.inTeam) CommonI18nKey.REMOVE_FROM_TEAM else CommonI18nKey.ADD_TO_TEAM),
                 type = ButtonType.submit,
                 style = styleButton
             ) {
@@ -164,11 +175,8 @@ class ListView(
                 style = "display: none;"
                 value = criteria.pagination.page.toString()
             }
-            row(
-                JustifyContent.SPACE_BETWEEN,
-                AlignItems.END,
-                style = "width: 100%; margin-top: 1rem; flex-wrap: wrap;"
-            ) {
+            div {
+                classes = setOf("pokemon-filter-fields")
                 inputs(autoSubmit)
             }
         }
@@ -217,7 +225,7 @@ class ListView(
         )
         if (isLoggedIn) {
             checkBox(
-                "Only my team",
+                translate(CommonI18nKey.ONLY_MY_TEAM),
                 QueryCriteriaType.TEAM.key(),
                 criteria.onlyTeam,
                 autoSubmit
@@ -272,7 +280,7 @@ class ListView(
                     style =
                         "margin: 0; color: ${Colors.DARKEST_BLUE}; background-color: ${Colors.CREAM_LIGHEST}; " +
                                 "border-radius: 999px; padding: 0.45rem 0.75rem; font-weight: 700;"
-                    +"Page ${criteria.pagination.page}"
+                    +"${translate(CommonI18nKey.PAGE)} ${criteria.pagination.page}"
                 }
                 if (result.hasNextPage) {
                     paginationButton(

@@ -37,7 +37,7 @@ class PokemonCard(
                 row { style = "width: 100%;" }
                 TypeChips(pokemon.types).create(this)
             }
-            grid("240px 1fr") {
+            grid("minmax(160px, 240px) minmax(0, 1fr)") {
                 column(JustifyContent.CENTER, AlignItems.CENTER, style = "padding: 1rem") {
                     PokemonImage(pokemon.generalId).create(this)
                     child()

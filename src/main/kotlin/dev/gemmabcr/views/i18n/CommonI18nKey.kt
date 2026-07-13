@@ -1,6 +1,7 @@
 package dev.gemmabcr.views.i18n
 
 enum class CommonI18nKey : I18nKey {
+    ADD_TO_TEAM,
     ALL,
     ALT_IMG,
     AREA,
@@ -19,23 +20,31 @@ enum class CommonI18nKey : I18nKey {
     LIST,
     LOCATION,
     LOGIN,
+    LOGOUT,
+    MENU,
     MORE_INFO,
+    MY_TEAM,
     NAME,
     NEXT,
     NO_RESULTS,
     NUMBER,
     OF,
+    ONLY_MY_TEAM,
+    PAGE,
     PREVIOUS,
     PROFILE,
     PROGRESS,
+    REMOVE_FROM_TEAM,
     RESULTS,
+    SELECT_TEAM,
     SHOWING,
     SPECIAL_CONDITION,
     SUBMIT,
     TITLE,
-    TYPE,
     TODOS,
-    UNCOMPLETED;
+    TYPE,
+    UNCOMPLETED,
+    UPLOAD_PROGRESS;
 
     override fun itemName() = name
 }

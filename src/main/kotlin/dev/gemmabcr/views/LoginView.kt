@@ -43,6 +43,7 @@ class LoginView(
                     call.respondRedirect("/profile")
                     return@get
                 }
+                call.applyLocale()
                 call.respondHtmlTemplate(LoginPage()) {}
             }
             post {
@@ -86,6 +87,7 @@ class LoginView(
                     return@get
                 }
 
+                call.applyLocale()
                 call.respondHtmlTemplate(ProfilePage(profile, session)) {}
             }
         }
@@ -135,6 +137,7 @@ class LoginView(
         if (request.contentType().match(io.ktor.http.ContentType.Application.Json)) {
             respond(HttpStatusCode.Unauthorized)
         } else {
+            applyLocale()
             respondHtmlTemplate(LoginPage("Invalid email or password.")) {}
         }
     }

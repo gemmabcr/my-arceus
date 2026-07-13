@@ -59,12 +59,57 @@ abstract class HtmlLayout(
                                 table { border-collapse: collapse; width: 100%; }
                                 th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
                                 a { color: inherit; }
+                                $pokemonListStyles
                             """.trimIndent()
                     )
                 }
             }
         }
     }
+
+    private val pokemonListStyles =
+        """
+            .pokemon-list-layout {
+                display: grid;
+                grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+                gap: 1.5rem;
+                align-items: start;
+            }
+            .pokemon-filter-sidebar {
+                position: sticky;
+                top: 5.5rem;
+                padding: 1rem;
+                background: white;
+                border: 1px solid ${Colors.CREAM};
+                border-radius: 8px;
+                box-shadow: rgba(0, 0, 0, 0.08) 0 1px 3px;
+            }
+            .pokemon-filter-sidebar select,
+            .pokemon-filter-sidebar input:not([type="hidden"]):not([type="checkbox"]) {
+                width: 100%;
+                min-width: 0;
+                box-sizing: border-box;
+            }
+            .pokemon-filter-sidebar form,
+            .pokemon-filter-sidebar form > div,
+            .pokemon-filter-fields,
+            .pokemon-filter-fields > div {
+                width: 100%;
+                min-width: 0;
+                box-sizing: border-box;
+            }
+            .pokemon-filter-fields {
+                display: grid !important;
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: 0.75rem;
+                margin: 1rem 0;
+            }
+            .pokemon-filter-sidebar form > div > button { width: 100%; }
+            @media (max-width: 560px) {
+                .pokemon-list-layout { grid-template-columns: 1fr; }
+                .pokemon-filter-sidebar { position: static; }
+            }
+        """.trimIndent()
 
     private fun FlowContent.header() {
         row(
@@ -92,13 +137,13 @@ abstract class HtmlLayout(
 
     private fun DIV.authenticatedLinks() {
         headerLink("/profile") {
-            +"Perfil"
+            +translate(CommonI18nKey.PROFILE)
         }
         form(action = "/logout", method = FormMethod.post) {
             style = "margin: 0;"
             button {
                 style = headerButtonStyle
-                +"Tancar sessio"
+                +translate(CommonI18nKey.LOGOUT)
             }
         }
     }
@@ -135,15 +180,15 @@ abstract class HtmlLayout(
             style = "position: relative;"
             summary {
                 style = headerButtonStyle
-                +"Menu"
+                +translate(CommonI18nKey.MENU)
             }
             div {
                 style = menuStyle
-                menuItem("/pokemons", "Pokemons")
+                menuItem("/pokemons", translate(CommonI18nKey.LIST))
                 if (session.user != null) {
-                    menuItem("/pokemons#my-team", "El meu equip")
-                    menuItem("/ocr", "Puja el teu proces")
-                    menuItem("/profile", "Perfil")
+                    menuItem("/pokemons#my-team", translate(CommonI18nKey.MY_TEAM))
+                    menuItem("/ocr", translate(CommonI18nKey.UPLOAD_PROGRESS))
+                    menuItem("/profile", translate(CommonI18nKey.PROFILE))
                 }
             }
         }
@@ -183,9 +228,13 @@ private fun DIV.languageSelector() {
         Language.entries.forEach {
             a(href = it.href()) {
                 style =
-                    "text-decoration: none; color: ${Colors.DARK_BLUE}; font-size: 0.78rem; font-weight: 700; " +
-                            "padding: 0.28rem 0.5rem; border-radius: 999px;"
-                +it.name
+                    "display: flex; align-items: center; text-decoration: none; padding: 0.28rem; " +
+                            "border-radius: 999px;"
+                title = it.label
+                attributes["aria-label"] = it.label
+                img(src = it.flagPath, alt = it.label) {
+                    style = "display: block; width: 24px; height: 16px; object-fit: cover; border-radius: 2px;"
+                }
             }
         }
     }

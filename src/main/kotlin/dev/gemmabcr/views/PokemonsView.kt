@@ -36,12 +36,14 @@ class PokemonsView(
                     val session = call.createSession(sessionTokenService)
                     val result = controller.pokemons(criteria, session)
                     val team = controller.team(session)
+                    call.applyLocale()
                     call.respondHtmlTemplate(ListView(criteria, result, todos, team, call.request.uri, session)) {}
                 }
                 get("/{id}") {
                     val id = call.parameters["id"]!!.toInt()
                     val session = call.createSession(sessionTokenService)
                     val pokemon = controller.pokemon(id, session)
+                    call.applyLocale()
                     call.respondHtmlTemplate(DetailView(pokemon, session)) {}
                 }
                 post("/{id}/todos") {

@@ -3,6 +3,7 @@ package dev.gemmabcr.views
 import dev.gemmabcr.controllers.Controller
 import dev.gemmabcr.controllers.TodoProgressService
 import dev.gemmabcr.models.AuthDao
+import dev.gemmabcr.models.Language
 import dev.gemmabcr.ocr.GameScreenshotOcrService
 import dev.gemmabcr.ocr.OcrTodoImportService
 import dev.gemmabcr.security.SessionTokenService
@@ -41,8 +42,13 @@ class PageFactory(
 
             route("/lang/{locale}") {
                 get {
-                    val locale = call.parameters["locale"] ?: "en"
-                    call.response.cookies.append("lang", locale, path = "/")
+                    val language = Language.fromTag(call.parameters["locale"]) ?: Language.EN
+                    call.response.cookies.append(
+                        name = LANGUAGE_COOKIE,
+                        value = language.tag,
+                        path = "/",
+                        maxAge = LANGUAGE_COOKIE_MAX_AGE_SECONDS,
+                    )
                     val referrer = call.request.headers[HttpHeaders.Referrer] ?: "/pokemons"
                     call.respondRedirect(referrer)
                 }
@@ -50,3 +56,5 @@ class PageFactory(
         }
     }
 }
+
+private const val LANGUAGE_COOKIE_MAX_AGE_SECONDS = 31_536_000L

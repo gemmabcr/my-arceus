@@ -44,6 +44,7 @@ class OcrView(
                     call.respondRedirect("/login")
                     return@get
                 }
+                call.applyLocale()
                 call.respondHtmlTemplate(OcrPage(session = session)) {}
             }
             post {
@@ -104,16 +105,19 @@ class OcrView(
                 ocrService.extractPokedexProgress(bytes, screenshot.originalFileName)
             }
         } catch (exception: IllegalStateException) {
+            applyLocale()
             respondHtmlTemplate(OcrPage(error = exception.message, session = session)) {}
             return
         }
 
         if (result == null) {
+            applyLocale()
             respondHtmlTemplate(OcrPage(error = "Need image to execute OCR.", session = session)) {}
             return
         }
 
         val preview = ocrTodoImportService.buildPreview(result, session)
+        applyLocale()
         respondHtmlTemplate(OcrPage(result = result, importPreview = preview, session = session)) {}
     }
 
