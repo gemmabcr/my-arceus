@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="My Arceus">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#27a5e9"/>
+      <stop offset="1" stop-color="#4bb4ec"/>
+    </linearGradient>
+    <linearGradient id="mountain" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#123f65"/>
+      <stop offset="1" stop-color="#082f50"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="64" height="64" fill="url(#sky)"/>
+
+  <path
+    d="M0 64 27.5 32.5 31 35l4-5 29 34Z"
+    fill="url(#mountain)"
+  />
+  <path
+    d="m22.5 38 5-5.5L31 35l4-5 7 8-5-2-3.5 4-3-4-4 3Z"
+    fill="#fffdf6"
+  />
+
+  <g fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+    <path
+      d="M17 17c1.5-5 7-8 15-8 7.5 0 13 2.6 15 7.2-1.7 1.2-2.5 2.2-2.6 3.5-3.2 2.8-7.3 4.2-12.4 4.2-5.4 0-9.8-1.5-12.9-4.5-.1-1-.8-1.8-2.1-2.4Z"
+      stroke-width="2.8"
+    />
+    <path d="M32 12.5v9M27.5 17h9" stroke-width="1.5"/>
+    <path d="m29 14 6 6m0-6-6 6" stroke-width="1"/>
+  </g>
+  <circle cx="32" cy="17" r="1.7" fill="#fff"/>
+</svg>

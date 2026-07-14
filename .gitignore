@@ -36,6 +36,7 @@ out/
 .vscode/
 
 .DS_store
+.DS_Store
 
 ## Environment
 .env

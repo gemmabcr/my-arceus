@@ -50,7 +50,7 @@ abstract class HtmlLayout(
     private fun HTML.pageHead() {
         head {
             title { +translate(CommonI18nKey.TITLE) }
-            link(rel = "icon", href = "/static/favicon.ico", type = "image/x-icon")
+            link(rel = "icon", href = "/icons/favicon.svg", type = "image/svg+xml")
             style {
                 unsafe {
                     raw(
