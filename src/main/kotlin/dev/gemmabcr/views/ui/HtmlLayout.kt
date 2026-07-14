@@ -78,6 +78,10 @@ abstract class HtmlLayout(
             .pokemon-filter-sidebar {
                 position: sticky;
                 top: 5.5rem;
+                max-height: calc(100vh - 6.5rem);
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                box-sizing: border-box;
                 padding: 1rem;
                 background: white;
                 border: 1px solid ${Colors.CREAM};
@@ -104,10 +108,100 @@ abstract class HtmlLayout(
                 gap: 0.75rem;
                 margin: 1rem 0;
             }
+            .area-filter-options {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 0.5rem;
+                width: 100%;
+            }
+            .area-filter-option-input {
+                position: absolute;
+                opacity: 0;
+                pointer-events: none;
+            }
+            .area-filter-option {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 0.3rem;
+                min-width: 0;
+                padding: 0.45rem;
+                border: 2px solid transparent;
+                border-radius: 8px;
+                background-color: ${Colors.CREAM_LIGHEST};
+                color: ${Colors.DARKEST_BLUE};
+                cursor: pointer;
+                text-align: center;
+                font-size: 0.72rem;
+                font-weight: 600;
+                box-sizing: border-box;
+            }
+            .area-filter-option img {
+                width: 64px;
+                height: 64px;
+                object-fit: contain;
+            }
+            .area-filter-option-all { grid-column: 1 / -1; min-height: 38px; }
+            .area-filter-option-input:checked + .area-filter-option {
+                border-color: ${Colors.DARK_BLUE};
+                background-color: ${Colors.CREAM};
+                box-shadow: rgba(0, 0, 0, 0.12) 0 1px 3px;
+            }
+            .area-filter-option-input:focus-visible + .area-filter-option {
+                outline: 3px solid ${Colors.DARK_BLUE};
+                outline-offset: 2px;
+            }
+            .type-filter-options {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 0.4rem;
+                width: 100%;
+            }
+            .type-filter-option-input {
+                position: absolute;
+                opacity: 0;
+                pointer-events: none;
+            }
+            .type-filter-option {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.35rem;
+                min-width: 0;
+                min-height: 36px;
+                padding: 0.35rem 0.45rem;
+                border: 2px solid transparent;
+                border-radius: 0.25rem;
+                background-color: ${Colors.DARKEST_BLUE};
+                color: ${Colors.ON_DARK_BLUE};
+                cursor: pointer;
+                font-size: 0.72rem;
+                font-weight: 600;
+                box-sizing: border-box;
+                opacity: 0.72;
+            }
+            .type-filter-option:hover { opacity: 1; }
+            .type-filter-option img { width: 18px; height: 18px; flex: 0 0 auto; }
+            .type-filter-option span { min-width: 0; overflow-wrap: anywhere; }
+            .type-filter-option-all { grid-column: 1 / -1; }
+            .type-filter-option-input:checked + .type-filter-option {
+                border-color: ${Colors.CREAM};
+                box-shadow: 0 0 0 2px ${Colors.DARK_BLUE};
+                opacity: 1;
+            }
+            .type-filter-option-input:focus-visible + .type-filter-option {
+                outline: 3px solid ${Colors.CREAM};
+                outline-offset: 2px;
+            }
             .pokemon-filter-sidebar form > div > button { width: 100%; }
             @media (max-width: 560px) {
                 .pokemon-list-layout { grid-template-columns: 1fr; }
-                .pokemon-filter-sidebar { position: static; }
+                .pokemon-filter-sidebar {
+                    position: static;
+                    max-height: none;
+                    overflow-y: visible;
+                }
             }
         """.trimIndent()
 

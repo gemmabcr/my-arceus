@@ -14,6 +14,10 @@ import dev.gemmabcr.views.adapters.ToDoTypeAdapter
 import dev.gemmabcr.views.adapters.TypeI18nKeyAdapter
 import dev.gemmabcr.views.i18n.CommonI18nKey
 import dev.gemmabcr.views.pages.components.PokemonCard
+import dev.gemmabcr.views.pages.components.filters.AreaFilterConfig
+import dev.gemmabcr.views.pages.components.filters.AreaFilterOption
+import dev.gemmabcr.views.pages.components.filters.TypeFilterConfig
+import dev.gemmabcr.views.pages.components.filters.TypeFilterOption
 import dev.gemmabcr.views.ui.Colors
 import dev.gemmabcr.views.ui.FormConfig
 import dev.gemmabcr.views.ui.HtmlLayout
@@ -34,6 +38,7 @@ import kotlinx.html.ButtonType
 import kotlinx.html.DIV
 import kotlinx.html.FlowContent
 import kotlinx.html.FormMethod
+import kotlinx.html.InputType
 import kotlinx.html.button
 import kotlinx.html.classes
 import kotlinx.html.div
@@ -43,8 +48,11 @@ import kotlinx.html.hiddenInput
 import kotlinx.html.id
 import kotlinx.html.img
 import kotlinx.html.input
+import kotlinx.html.label
 import kotlinx.html.onClick
+import kotlinx.html.onChange
 import kotlinx.html.p
+import kotlinx.html.span
 import kotlinx.html.style
 
 class ListView(
@@ -85,13 +93,7 @@ class ListView(
                 }
                 val pokemons = result.results
                 when {
-                    pokemons.isEmpty() -> row(JustifyContent.CENTER) {
-                        p { +translate(CommonI18nKey.NO_RESULTS) }
-                        img(src = ImageSource.NO_RESULT.url) {
-                            height = "120"
-                            width = "120"
-                        }
-                    }
+                    pokemons.isEmpty() -> noResultsCard(translate(CommonI18nKey.NO_RESULTS))
 
                     else -> {
                         pagination()
@@ -183,20 +185,23 @@ class ListView(
     }
 
     private fun DIV.inputs(autoSubmit: String) {
-        selectInput(
-            translate(CommonI18nKey.AREA),
-            QueryCriteriaType.AREA.key(),
-            areaOptions(),
-            value = criteria.area?.name ?: "",
-            onChange = autoSubmit
+        areaFilter(
+            AreaFilterConfig(
+                label = translate(CommonI18nKey.AREA),
+                name = QueryCriteriaType.AREA.key(),
+                allLabel = translate(CommonI18nKey.ALL),
+                selectedValue = criteria.area?.name,
+                options = Area.entries.map { area ->
+                    AreaFilterOption(
+                        value = area.name,
+                        label = translate(AreaI18nKeyAdapter(area).i18nKey()),
+                        iconPath = area.iconPath()
+                    )
+                },
+                onChange = autoSubmit
+            )
         )
-        selectInput(
-            translate(CommonI18nKey.TYPE),
-            QueryCriteriaType.TYPE.key(),
-            typeOptions(),
-            value = criteria.type?.name ?: "",
-            onChange = autoSubmit
-        )
+        typeInput(autoSubmit)
         textInput(
             translate(CommonI18nKey.NAME),
             QueryCriteriaType.NAME.key(),
@@ -233,15 +238,24 @@ class ListView(
         }
     }
 
-    private fun areaOptions(): Map<String, String> =
-        mapOf("" to translate(CommonI18nKey.ALL)) + Area.entries.associate {
-            it.name to translate(AreaI18nKeyAdapter(it).i18nKey())
-        }
-
-    private fun typeOptions(): Map<String, String> =
-        mapOf("" to translate(CommonI18nKey.ALL)) + Type.entries.associate {
-            it.name to translate(TypeI18nKeyAdapter(it).i18nKey())
-        }
+    private fun DIV.typeInput(autoSubmit: String) {
+        typeFilter(
+            TypeFilterConfig(
+                label = translate(CommonI18nKey.TYPE),
+                name = QueryCriteriaType.TYPE.key(),
+                allLabel = translate(CommonI18nKey.ALL),
+                selectedValue = criteria.type?.name,
+                options = Type.entries.map { type ->
+                    TypeFilterOption(
+                        value = type.name,
+                        label = translate(TypeI18nKeyAdapter(type).i18nKey()),
+                        iconPath = type.iconPath()
+                    )
+                },
+                onChange = autoSubmit
+            )
+        )
+    }
 
     private fun toDoOptions(): Map<String, String> =
         mapOf("" to "") + todos.associate { it.id.toString() to ToDoTypeAdapter(it.description).text() }
@@ -294,6 +308,107 @@ class ListView(
     }
 }
 
+private fun DIV.areaFilter(config: AreaFilterConfig) {
+    column(style = "width: 100%;") {
+        label {
+            style = "font-size: 0.85rem; color: #666; margin-bottom: 0.2rem; font-weight: 500;"
+            +config.label
+        }
+        div {
+            classes = setOf("area-filter-options")
+            attributes["role"] = "radiogroup"
+            areaFilterOption(config, "", config.allLabel)
+            config.options.forEach { option ->
+                areaFilterOption(config, option.value, option.label, option.iconPath)
+            }
+        }
+    }
+}
+
+private fun DIV.areaFilterOption(
+    config: AreaFilterConfig,
+    value: String,
+    label: String,
+    iconPath: String? = null,
+) {
+    val inputId = "area-filter-${value.ifEmpty { "all" }.lowercase()}"
+    input(type = InputType.radio, name = config.name) {
+        id = inputId
+        this.value = value
+        checked = config.selectedValue == value || config.selectedValue == null && value.isEmpty()
+        onChange = config.onChange
+        classes = setOf("area-filter-option-input")
+    }
+    label {
+        attributes["for"] = inputId
+        classes = if (iconPath == null) {
+            setOf("area-filter-option", "area-filter-option-all")
+        } else {
+            setOf("area-filter-option")
+        }
+        iconPath?.let { path ->
+            img(src = path, alt = label)
+        }
+        span { +label }
+    }
+}
+
+private fun Area.iconPath(): String = when (this) {
+    Area.COASTLANDS -> "/icons/areas/cobalt_coastlands.png"
+    Area.DISTORTION -> "/icons/areas/distorsion.png"
+    Area.FIELDLANDS -> "/icons/areas/obsidian_fieldlands.png"
+    Area.HIGHLANDS -> "/icons/areas/coronet_highlands.png"
+    Area.ICELANDS -> "/icons/areas/alabaster_icelands.png"
+    Area.MIRELANDS -> "/icons/areas/crimson_mirelands.png"
+}
+
+private fun DIV.typeFilter(config: TypeFilterConfig) {
+    column(style = "width: 100%;") {
+        label {
+            style = "font-size: 0.85rem; color: #666; margin-bottom: 0.2rem; font-weight: 500;"
+            +config.label
+        }
+        div {
+            classes = setOf("type-filter-options")
+            attributes["role"] = "radiogroup"
+            typeFilterOption(config, "", config.allLabel)
+            config.options.forEach { option ->
+                typeFilterOption(config, option.value, option.label, option.iconPath)
+            }
+        }
+    }
+}
+
+private fun DIV.typeFilterOption(
+    config: TypeFilterConfig,
+    value: String,
+    label: String,
+    iconPath: String? = null,
+) {
+    val inputId = "type-filter-${value.ifEmpty { "all" }.lowercase()}"
+    input(type = InputType.radio, name = config.name) {
+        id = inputId
+        this.value = value
+        checked = config.selectedValue == value || config.selectedValue == null && value.isEmpty()
+        onChange = config.onChange
+        classes = setOf("type-filter-option-input")
+    }
+    label {
+        attributes["for"] = inputId
+        classes = if (iconPath == null) {
+            setOf("type-filter-option", "type-filter-option-all")
+        } else {
+            setOf("type-filter-option")
+        }
+        iconPath?.let { path ->
+            img(src = path, alt = "")
+        }
+        span { +label }
+    }
+}
+
+private fun Type.iconPath(): String = "/icons/types/${name.lowercase()}.svg"
+
 private fun DIV.paginationButton(
     text: String,
     toPage: Int,
@@ -308,6 +423,27 @@ private fun DIV.paginationButton(
                     "$disableEmptyFieldsScript; " +
                     "document.getElementById('filter-form').submit()"
         +text
+    }
+}
+
+private fun DIV.noResultsCard(message: String) {
+    column(
+        JustifyContent.CENTER,
+        AlignItems.CENTER,
+        gap = Gap.MIN,
+        style =
+            "width: 100%; box-sizing: border-box; padding: 2rem; " +
+                    "background-color: ${Colors.CREAM}; border-radius: 1rem; " +
+                    "box-shadow: rgba(0, 0, 0, 0.16) 0 1px 4px;"
+    ) {
+        img(src = ImageSource.NO_RESULT.url) {
+            height = "120"
+            width = "120"
+        }
+        p {
+            style = "margin: 0; color: ${Colors.DARKEST_BLUE}; font-weight: 700; text-align: center;"
+            +message
+        }
     }
 }
 
