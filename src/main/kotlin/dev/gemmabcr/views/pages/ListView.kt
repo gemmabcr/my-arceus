@@ -354,12 +354,12 @@ private fun DIV.areaFilterOption(
 }
 
 private fun Area.iconPath(): String = when (this) {
-    Area.COASTLANDS -> "/icons/areas/cobalt_coastlands.png"
-    Area.DISTORTION -> "/icons/areas/distorsion.png"
-    Area.FIELDLANDS -> "/icons/areas/obsidian_fieldlands.png"
-    Area.HIGHLANDS -> "/icons/areas/coronet_highlands.png"
-    Area.ICELANDS -> "/icons/areas/alabaster_icelands.png"
-    Area.MIRELANDS -> "/icons/areas/crimson_mirelands.png"
+    Area.COASTLANDS -> "/icons/areas/cobalt_coastlands.webp"
+    Area.DISTORTION -> "/icons/areas/distorsion.webp"
+    Area.FIELDLANDS -> "/icons/areas/obsidian_fieldlands.webp"
+    Area.HIGHLANDS -> "/icons/areas/coronet_highlands.webp"
+    Area.ICELANDS -> "/icons/areas/alabaster_icelands.webp"
+    Area.MIRELANDS -> "/icons/areas/crimson_mirelands.webp"
 }
 
 private fun DIV.typeFilter(config: TypeFilterConfig) {
