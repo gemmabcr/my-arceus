@@ -6,6 +6,7 @@ import java.util.ResourceBundle
 
 object I18n {
     private val defaultLocale = Locale.ENGLISH
+    private val supportedLanguages = setOf("en", "ca", "es")
     private val threadLocalLocale = ThreadLocal<Locale>()
 
     fun setLocale(locale: Locale) {
@@ -17,7 +18,9 @@ object I18n {
     fun getMessage(i18nKey: I18nKey): String {
         val key = i18nKey.key()
         return try {
-            val bundle = ResourceBundle.getBundle("messages", getLocale())
+            val requestedLanguage = getLocale().language
+            val language = requestedLanguage.takeIf { it in supportedLanguages } ?: defaultLocale.language
+            val bundle = ResourceBundle.getBundle("messages_$language", Locale.ROOT)
             bundle.getString(key)
         } catch (e: MissingResourceException) {
             print("not found $e")

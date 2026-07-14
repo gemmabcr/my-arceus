@@ -17,7 +17,6 @@ import kotlinx.html.HTML
 import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.button
-import kotlinx.html.details
 import kotlinx.html.div
 import kotlinx.html.form
 import kotlinx.html.head
@@ -25,8 +24,8 @@ import kotlinx.html.h1 as htmlH1
 import kotlinx.html.h2 as htmlH2
 import kotlinx.html.img
 import kotlinx.html.link
+import kotlinx.html.span
 import kotlinx.html.style
-import kotlinx.html.summary
 import kotlinx.html.title
 import kotlinx.html.unsafe
 
@@ -34,9 +33,12 @@ abstract class HtmlLayout(
     private val heading: I18nKey,
     private val session: Session = Session(),
 ) : Template<HTML> {
+    private val locale = I18n.getLocale()
+
     protected fun translate(key: I18nKey) = I18n.getMessage(key)
 
     override fun HTML.apply() {
+        I18n.setLocale(locale)
         pageHead()
         body {
             header()
@@ -270,21 +272,18 @@ abstract class HtmlLayout(
     }
 
     private fun DIV.mainMenu() {
-        details {
-            style = "position: relative;"
-            summary {
-                style = headerButtonStyle
-                +translate(CommonI18nKey.MENU)
-            }
-            div {
-                style = menuStyle
-                menuItem("/pokemons", translate(CommonI18nKey.LIST))
-                if (session.user != null) {
-                    menuItem("/pokemons#my-team", translate(CommonI18nKey.MY_TEAM))
-                    menuItem("/ocr", translate(CommonI18nKey.UPLOAD_PROGRESS))
-                    menuItem("/profile", translate(CommonI18nKey.PROFILE))
-                }
-            }
+        row(
+            gap = Gap.MIN,
+            align = AlignItems.CENTER,
+            style =
+                "background-color: ${Colors.CREAM_LIGHEST}; padding: 0.25rem; border-radius: 8px; " +
+                        "flex-wrap: wrap;"
+        ) {
+            val authenticated = session.user != null
+            menuItem("/pokemons", translate(CommonI18nKey.LIST))
+            menuItem("/pokemons#my-team", translate(CommonI18nKey.MY_TEAM), authenticated)
+            menuItem("/ocr", translate(CommonI18nKey.UPLOAD_PROGRESS), authenticated)
+            menuItem("/profile", translate(CommonI18nKey.PROFILE), authenticated)
         }
     }
 
@@ -297,19 +296,25 @@ abstract class HtmlLayout(
         "background-color: white; box-shadow: -8px 10px 30px -15px rgba(0, 0, 0, 0.32); " +
                 "padding: 0.85rem 1rem; position: sticky; top: 0; z-index: 10; flex-wrap: wrap;"
 
-    private val menuStyle =
-        "position: absolute; right: 0; top: 2.6rem; min-width: 220px; background-color: white; " +
-                "border: 1px solid ${Colors.CREAM}; border-radius: 8px; " +
-                "box-shadow: rgba(0,0,0,0.18) 0 8px 20px; " +
-                "padding: 0.4rem; display: flex; flex-direction: column; gap: 0.25rem;"
 }
 
-private fun DIV.menuItem(href: String, label: String) {
-    a(href = href) {
-        style =
-            "display: block; text-decoration: none; color: ${Colors.DARKEST_BLUE}; padding: 0.65rem 0.75rem; " +
-                    "border-radius: 6px; font-weight: 600;"
-        +label
+private fun DIV.menuItem(href: String, label: String, enabled: Boolean = true) {
+    val style =
+        "display: inline-flex; align-items: center; min-height: 34px; box-sizing: border-box; " +
+                "text-decoration: none; color: ${Colors.DARKEST_BLUE}; padding: 0.4rem 0.65rem; " +
+                "border-radius: 6px; background-color: white; font-size: 0.88rem; font-weight: 600; " +
+                "white-space: nowrap;"
+    if (enabled) {
+        a(href = href) {
+            this.style = style
+            +label
+        }
+    } else {
+        span {
+            this.style = "$style opacity: 0.45; cursor: not-allowed;"
+            attributes["aria-disabled"] = "true"
+            +label
+        }
     }
 }
 
