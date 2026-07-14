@@ -274,31 +274,33 @@ class ListView(
         row(
             JustifyContent.SPACE_BETWEEN,
             AlignItems.CENTER,
+            gap = Gap.MIN,
             style =
-                "background-color: white; border: 1px solid ${Colors.CREAM}; border-radius: 8px; " +
-                        "padding: 0.75rem 1rem; flex-wrap: wrap;"
+                "width: 100%; box-sizing: border-box; border-top: 1px solid ${Colors.CREAM}; " +
+                        "padding: 0.45rem 0.25rem 0; flex-wrap: wrap;"
         ) {
             p {
-                style = "margin: 0; color: ${Colors.DARK_BLUE}; font-weight: 700;"
+                style = "margin: 0; color: #66757D; font-size: 0.75rem; font-weight: 500;"
                 +summary
             }
             row(JustifyContent.CENTER, AlignItems.CENTER, gap = Gap.MIN) {
                 if (criteria.pagination.page > 1) {
                     paginationButton(
-                        translate(CommonI18nKey.PREVIOUS),
+                        "← ${translate(CommonI18nKey.PREVIOUS)}",
                         criteria.pagination.page - 1,
                         disableEmptyFieldsByFormIdScript,
                     )
                 }
                 p {
                     style =
-                        "margin: 0; color: ${Colors.DARKEST_BLUE}; background-color: ${Colors.CREAM_LIGHEST}; " +
-                                "border-radius: 999px; padding: 0.45rem 0.75rem; font-weight: 700;"
+                        "margin: 0; color: ${Colors.DARK_BLUE}; background-color: ${Colors.CREAM_LIGHEST}; " +
+                                "border-radius: 999px; padding: 0.28rem 0.55rem; font-size: 0.72rem; " +
+                                "font-weight: 600;"
                     +"${translate(CommonI18nKey.PAGE)} ${criteria.pagination.page}"
                 }
                 if (result.hasNextPage) {
                     paginationButton(
-                        translate(CommonI18nKey.NEXT),
+                        "${translate(CommonI18nKey.NEXT)} →",
                         criteria.pagination.page + 1,
                         disableEmptyFieldsByFormIdScript,
                     )
@@ -416,8 +418,9 @@ private fun DIV.paginationButton(
 ) {
     button(type = ButtonType.button) {
         style =
-            "background-color: ${Colors.DARK_BLUE}; border: none; padding: 0.5rem 0.85rem; " +
-                    "border-radius: 8px; cursor: pointer; font-weight: bold; color: ${Colors.ON_DARK_BLUE};"
+            "background-color: white; border: 1px solid ${Colors.CREAM}; padding: 0.3rem 0.55rem; " +
+                    "border-radius: 6px; cursor: pointer; color: ${Colors.DARK_BLUE}; font-size: 0.75rem; " +
+                    "font-weight: 600;"
         this.onClick =
             "document.getElementById('page-input').value = '${toPage}'; " +
                     "$disableEmptyFieldsScript; " +
