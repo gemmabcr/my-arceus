@@ -31,7 +31,7 @@ class DetailView(
     override fun DIV.content() {
         column(gap = Gap.MAX) {
             buttonLink("/", translate(CommonI18nKey.BACK))
-            PokemonCard(pokemon).create(this).apply {
+            PokemonCard(pokemon, session.user != null).create(this).apply {
                 column(style = "padding: 1rem; border-top: 1px solid ${Colors.DARK_BLUE}") {
                     h4(translate(CommonI18nKey.LOCATION), margin = false)
                     val areas: Map<Area, List<Location>> = pokemon.location.groupBy { it.area }

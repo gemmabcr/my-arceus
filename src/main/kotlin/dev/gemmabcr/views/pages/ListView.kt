@@ -98,7 +98,7 @@ class ListView(
                     else -> {
                         pagination()
                         result.results.forEach { pokemon ->
-                            PokemonCard(pokemon).with {
+                            PokemonCard(pokemon, isLoggedIn).with {
                                 row(JustifyContent.CENTER, style = "padding: 1rem;") {
                                     if (isLoggedIn) {
                                         teamButton(pokemon)

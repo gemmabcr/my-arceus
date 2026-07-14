@@ -33,17 +33,20 @@ import kotlinx.html.tr
 
 class ToDos(
     private val pokemonId: Int,
-    private val toDos: List<ProgressToDo>
+    private val toDos: List<ProgressToDo>,
+    private val canEdit: Boolean,
 ) : View {
     override fun create(content: FlowContent): FlowContent = content.apply {
         column(align = AlignItems.CENTER, style = "padding: 1rem;") {
             row(JustifyContent.CENTER, AlignItems.CENTER, Gap.MAX) {
                 h4(translate(CommonI18nKey.TODOS), margin = false)
-                actionButton(
-                    translate(CommonI18nKey.EDIT),
-                    style = "height: auto; padding: 0.25rem 0.5rem;",
-                    onClick = toggleEditScript()
-                )
+                if (canEdit) {
+                    actionButton(
+                        translate(CommonI18nKey.EDIT),
+                        style = "height: auto; padding: 0.25rem 0.5rem;",
+                        onClick = toggleEditScript()
+                    )
+                }
             }
             val isCompleted = toDos.all { it.completed() }
             h5(title(isCompleted), margin = false)

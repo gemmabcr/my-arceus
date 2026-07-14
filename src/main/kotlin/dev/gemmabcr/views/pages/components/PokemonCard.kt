@@ -15,6 +15,7 @@ import kotlinx.html.style
 
 class PokemonCard(
     private val pokemon: BasePokemon,
+    private val canEdit: Boolean,
 ) : View {
     private var child: () -> Unit = {}
     override fun create(content: FlowContent): FlowContent = content.apply {
@@ -42,7 +43,7 @@ class PokemonCard(
                     PokemonImage(pokemon.generalId).create(this)
                     child()
                 }
-                ToDos(pokemon.hisuiId, pokemon.toDos).create(this)
+                ToDos(pokemon.hisuiId, pokemon.toDos, canEdit).create(this)
             }
         }
     }
