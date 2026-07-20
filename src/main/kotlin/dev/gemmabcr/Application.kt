@@ -12,6 +12,8 @@ import dev.gemmabcr.database.ExposedUserDao
 import dev.gemmabcr.ocr.GameScreenshotOcrService
 import dev.gemmabcr.ocr.OcrTodoImportService
 import dev.gemmabcr.security.SessionTokenService
+import dev.gemmabcr.security.OAuthConfig
+import dev.gemmabcr.security.OAuthService
 import dev.gemmabcr.views.PageFactory
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
@@ -31,6 +33,7 @@ fun Application.module() {
     val userDao = ExposedUserDao()
     val authDao = ExposedAuthDao()
     val sessionTokenService = SessionTokenService(authDao)
+    val oauthService = OAuthService(OAuthConfig.from(config))
 
     install(ContentNegotiation) {
         json(jsonConfig)
@@ -45,5 +48,6 @@ fun Application.module() {
         GameScreenshotOcrService(),
         OcrTodoImportService(pokemonDao, userDao),
         sessionTokenService,
+        oauthService,
     ).create(this)
 }

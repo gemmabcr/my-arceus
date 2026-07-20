@@ -97,6 +97,24 @@ class ExposedUserDaoTest {
     }
 
     @Test
+    fun givenNewAccount_whenRegistering_thenAuthenticatesWithHashedPassword() = runBlocking {
+        val user = authDao.register("new-player@example.com", "secure-password")
+
+        assertEquals(user, authDao.authenticate("new-player@example.com", "secure-password"))
+        assertEquals(null, authDao.authenticate("new-player@example.com", "wrong-password"))
+        assertEquals(null, authDao.register("NEW-player@example.com", "another-password"))
+    }
+
+    @Test
+    fun givenOAuthIdentity_whenSigningInAgain_thenReusesAccount() = runBlocking {
+        val firstUser = authDao.findOrCreateOAuthUser("google", "google-123", "social@example.com")
+        val sameUser = authDao.findOrCreateOAuthUser("google", "google-123", "social@example.com")
+
+        assertEquals(firstUser, sameUser)
+        assertEquals("social@example.com", authDao.profile(firstUser)?.email)
+    }
+
+    @Test
     fun givenUserTeam_whenAddingAndRemovingPokemon_thenPersistsSelection() = runBlocking {
         dao.addPokemonToTeam(1, 25)
         dao.addPokemonToTeam(1, 74)

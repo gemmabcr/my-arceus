@@ -7,6 +7,7 @@ import dev.gemmabcr.models.Language
 import dev.gemmabcr.ocr.GameScreenshotOcrService
 import dev.gemmabcr.ocr.OcrTodoImportService
 import dev.gemmabcr.security.SessionTokenService
+import dev.gemmabcr.security.OAuthService
 import io.ktor.http.HttpHeaders
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -16,6 +17,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 
+@Suppress("LongParameterList")
 class PageFactory(
     private val controller: Controller,
     private val authDao: AuthDao,
@@ -23,6 +25,7 @@ class PageFactory(
     private val ocrService: GameScreenshotOcrService,
     private val ocrTodoImportService: OcrTodoImportService,
     private val sessionTokenService: SessionTokenService,
+    private val oauthService: OAuthService,
 ) {
     fun create(application: Application) {
         application.routing {
@@ -33,7 +36,7 @@ class PageFactory(
                 }
             }
             val views = listOf(
-                LoginView(authDao, sessionTokenService),
+                LoginView(authDao, sessionTokenService, oauthService),
                 PokemonsView(controller, todoProgressService, sessionTokenService),
                 TeamView(controller, sessionTokenService),
                 OcrView(ocrService, ocrTodoImportService, sessionTokenService),

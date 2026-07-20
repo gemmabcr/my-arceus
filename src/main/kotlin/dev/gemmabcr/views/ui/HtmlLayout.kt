@@ -32,6 +32,7 @@ import kotlinx.html.unsafe
 abstract class HtmlLayout(
     private val heading: I18nKey,
     private val session: Session = Session(),
+    private val showHeading: Boolean = true,
 ) : Template<HTML> {
     private val locale = I18n.getLocale()
 
@@ -205,6 +206,9 @@ abstract class HtmlLayout(
                     overflow-y: visible;
                 }
             }
+            @media (max-width: 720px) {
+                .auth-layout { grid-template-columns: 1fr !important; }
+            }
         """.trimIndent()
 
     private fun FlowContent.header() {
@@ -247,9 +251,11 @@ abstract class HtmlLayout(
     private fun FlowContent.mainContent() {
         div {
             style = "max-width: 980px; margin-left: auto; margin-right: auto; padding: 0 1rem;"
-            htmlH2 {
-                style = "color: ${Colors.DARKEST_BLUE}; margin: 1.5rem 0 1rem;"
-                +translate(heading)
+            if (showHeading) {
+                htmlH2 {
+                    style = "color: ${Colors.DARKEST_BLUE}; margin: 1.5rem 0 1rem;"
+                    +translate(heading)
+                }
             }
             content()
         }

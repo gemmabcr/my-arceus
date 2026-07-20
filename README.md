@@ -83,6 +83,34 @@ To execute the unit and integration tests:
 ./gradlew test
 ```
 
+### Social sign-in
+
+Google and Apple sign-in are optional. Their buttons remain visible but disabled
+until the corresponding credentials are present in `.env`.
+
+For Google, create an OAuth client for a web application and register this
+production redirect URI:
+
+```text
+https://my-arceus.com/auth/google/callback
+```
+
+Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `.env`. See the
+[Google OpenID Connect documentation](https://developers.google.com/identity/openid-connect/openid-connect).
+
+For Apple, create a Services ID, a Sign in with Apple key, and a client-secret
+JWT. Register this return URL:
+
+```text
+https://my-arceus.com/auth/apple/callback
+```
+
+Set the Services ID as `APPLE_CLIENT_ID` and the generated JWT as
+`APPLE_CLIENT_SECRET`. Apple client secrets expire and must be rotated. See the
+[Sign in with Apple REST API documentation](https://developer.apple.com/documentation/signinwithapplerestapi).
+
+Keep all client secrets only in `.env`; never commit them to the repository.
+
 ## Project Structure
 
 - `src/main/kotlin`: Application source code.
