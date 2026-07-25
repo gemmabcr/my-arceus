@@ -1,10 +1,10 @@
-package dev.gemmabcr.views.pages.components
+package dev.gemmabcr.views.ui
 
 import kotlinx.html.FlowContent
 import kotlinx.html.img
 import kotlinx.html.style
 
-class PokemonImage(private val id: Int) : View {
+class PokemonImage(private val id: Int) : UiComponent {
     private val url = "https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/"
     private val hisuiImages = setOf(
         GROWLITHE,

@@ -2,12 +2,15 @@ package dev.gemmabcr.views
 
 import dev.gemmabcr.controllers.Controller
 import dev.gemmabcr.security.SessionTokenService
+import dev.gemmabcr.views.pages.TeamPage
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.request.receiveParameters
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondRedirect
+import io.ktor.server.html.respondHtmlTemplate
+import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
@@ -20,6 +23,12 @@ class TeamView(
     override fun create(application: Application) {
         application.routing {
             route("/team") {
+                get {
+                    val session = call.createSession(sessionTokenService)
+                    val team = controller.team(session)
+                    call.applyLocale()
+                    call.respondHtmlTemplate(TeamPage(team, session)) {}
+                }
                 post {
                     val session = call.createSession(sessionTokenService)
                     if (session.user == null) {

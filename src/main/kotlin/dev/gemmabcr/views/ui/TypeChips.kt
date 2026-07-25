@@ -1,15 +1,14 @@
-package dev.gemmabcr.views.pages.components
+package dev.gemmabcr.views.ui
 
 import dev.gemmabcr.models.pokemons.Type
 import dev.gemmabcr.views.adapters.TypeI18nKeyAdapter
-import dev.gemmabcr.views.ui.Colors
 import dev.gemmabcr.views.ui.flexs.JustifyContent
 import dev.gemmabcr.views.ui.flexs.row
 import kotlinx.html.FlowContent
 import kotlinx.html.img
 import kotlinx.html.style
 
-class TypeChips(private val types: List<Type>) : View {
+class TypeChips(private val types: List<Type>) : UiComponent {
     private fun url(type: String) =
         "https://raw.githubusercontent.com/partywhale/pokemon-type-icons/refs/heads/main/icons/$type.svg"
 

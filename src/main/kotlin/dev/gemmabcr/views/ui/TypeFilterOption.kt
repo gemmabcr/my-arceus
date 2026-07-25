@@ -1,4 +1,4 @@
-package dev.gemmabcr.views.pages.components.filters
+package dev.gemmabcr.views.ui
 
 data class TypeFilterOption(
     val value: String,

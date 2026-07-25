@@ -5,11 +5,10 @@ import kotlinx.html.ButtonType
 import kotlinx.html.DIV
 import kotlinx.html.FlowContent
 import kotlinx.html.button
+import kotlinx.html.classes
 import kotlinx.html.form
 import kotlinx.html.id
 import kotlinx.html.onClick
-import kotlinx.html.onMouseOut
-import kotlinx.html.onMouseOver
 import kotlinx.html.onSubmit
 import kotlinx.html.style
 
@@ -35,16 +34,8 @@ fun FlowContent.button(
     block: (kotlinx.html.BUTTON.() -> Unit)? = null
 ) {
     button(type = type) {
-        this.style = "background-color: ${Colors.CREAM}; border: none; padding: 0.6rem 1.2rem; border-radius: 8px; " +
-                "cursor: pointer; font-weight: bold; color: ${Colors.DARKEST_BLUE}; height: 42px; " +
-                "transition: all 0.2s ease-in-out; box-shadow: 0 2px 4px rgba(0,0,0,0.1);${style?.let { " $it" } ?: ""}"
-        onMouseOver =
-            "this.style.backgroundColor='#EAE4C3'; " +
-                    "this.style.transform='translateY(-1px)'; " +
-                    "this.style.boxShadow='0 4px 6px rgba(0,0,0,0.15)'"
-        onMouseOut =
-            "this.style.backgroundColor='${Colors.CREAM}'; this.style.transform='translateY(0)';" +
-                    " this.style.boxShadow='0 2px 4px rgba(0,0,0,0.1)'"
+        classes = setOf("ui-primary-button")
+        this.style = style.orEmpty()
         onClick?.let { this.onClick = it }
         +text
         block?.invoke(this)

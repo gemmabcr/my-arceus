@@ -15,10 +15,10 @@ class PokedexScreenshotExtractor {
         val tasks = parseTasks(tasksText)
 
         val warnings = buildList {
-            if (pokemonName == null) add("No s'ha pogut identificar clarament el nom del Pokémon.")
-            if (pokemonNumber == null) add("No s'ha pogut identificar el número de la Pokédex.")
-            if (progressLevel == null) add("No s'ha pogut llegir el nivell de progrés.")
-            if (tasks.isEmpty()) add("No s'han pogut extreure tasques de la captura.")
+            if (pokemonName == null) add(OcrWarning.MISSING_NAME)
+            if (pokemonNumber == null) add(OcrWarning.MISSING_NUMBER)
+            if (progressLevel == null) add(OcrWarning.MISSING_PROGRESS)
+            if (tasks.isEmpty()) add(OcrWarning.MISSING_TASKS)
         }
 
         return PokedexScreenshotOcrResult(
@@ -26,7 +26,7 @@ class PokedexScreenshotExtractor {
             pokemonNumber = pokemonNumber,
             progressLevel = progressLevel,
             tasks = tasks,
-            warning = warnings.takeIf { it.isNotEmpty() }?.joinToString(" ")
+            warning = warnings.takeIf { it.isNotEmpty() }
         )
     }
 }

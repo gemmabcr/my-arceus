@@ -1,13 +1,13 @@
-package dev.gemmabcr.views.pages.components
+package dev.gemmabcr.views.ui
 
 import dev.gemmabcr.models.pokemons.BasePokemon
-import dev.gemmabcr.views.ui.Colors
 import dev.gemmabcr.views.ui.flexs.AlignItems
 import dev.gemmabcr.views.ui.flexs.JustifyContent
 import dev.gemmabcr.views.ui.flexs.column
 import dev.gemmabcr.views.ui.flexs.row
 import dev.gemmabcr.views.ui.grid
 import kotlinx.html.FlowContent
+import kotlinx.html.classes
 import kotlinx.html.div
 import kotlinx.html.h3
 import kotlinx.html.h4
@@ -16,16 +16,18 @@ import kotlinx.html.style
 class PokemonCard(
     private val pokemon: BasePokemon,
     private val canEdit: Boolean,
-) : View {
+) : UiComponent {
     private var child: () -> Unit = {}
     override fun create(content: FlowContent): FlowContent = content.apply {
         column {
-            style =
-                "background-color: ${Colors.CREAM}; border-radius: 0 0 1rem 1rem; " +
-                        "box-shadow: rgba(0, 0, 0, 0.16) 0 1px 4px; width: 100%;"
-            row(align = AlignItems.CENTER, style = "background-color: ${Colors.DARK_BLUE}; padding: 0.25rem;") {
+            classes = setOf("ui-card")
+            style = "width: 100%; overflow: hidden;"
+            row(
+                align = AlignItems.CENTER,
+                style = "background-color: ${Colors.DARK_BLUE}; padding: 0.55rem 0.65rem;"
+            ) {
                 div {
-                    style = "outline: 1px solid ${Colors.CREAM}; padding: 0.25rem;"
+                    style = "border: 1px solid ${Colors.CREAM}; border-radius: 6px; padding: 0.25rem 0.4rem;"
                     h4 {
                         style = textStyle()
                         +pokemon.hisuiId.toString()
@@ -39,6 +41,7 @@ class PokemonCard(
                 TypeChips(pokemon.types).create(this)
             }
             grid("minmax(160px, 240px) minmax(0, 1fr)") {
+                classes = setOf("pokemon-card-body")
                 column(JustifyContent.CENTER, AlignItems.CENTER, style = "padding: 1rem") {
                     PokemonImage(pokemon.generalId).create(this)
                     child()

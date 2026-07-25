@@ -102,9 +102,8 @@ class Controller(
 
     suspend fun team(session: Session): List<Pokemon> {
         val userId = session.user ?: return emptyList()
-        return userDao.team(userId).map { teamPokemon ->
-            createPokemon(pokemonDao.pokemon(teamPokemon.pokemonId)).copy(inTeam = true)
-        }
+        val team = userDao.team(userId).map { teamPokemon -> pokemonDao.pokemon(teamPokemon.pokemonId) }
+        return withUserData(team, userId)
     }
 
     suspend fun addPokemonToTeam(pokemonId: Int, session: Session): Boolean {

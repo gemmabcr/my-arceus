@@ -40,10 +40,6 @@ class OcrView(
         route("/ocr") {
             get {
                 val session = call.createSession(sessionTokenService)
-                if (session.user == null) {
-                    call.respondRedirect("/login")
-                    return@get
-                }
                 call.applyLocale()
                 call.respondHtmlTemplate(OcrPage(session = session)) {}
             }

@@ -1,9 +1,8 @@
-package dev.gemmabcr.views.pages.components
+package dev.gemmabcr.views.ui
 
 import dev.gemmabcr.models.pokemons.todo.ProgressToDo
 import dev.gemmabcr.views.adapters.ToDoTypeAdapter
 import dev.gemmabcr.views.i18n.CommonI18nKey
-import dev.gemmabcr.views.ui.Colors
 import dev.gemmabcr.views.ui.button as actionButton
 import dev.gemmabcr.views.ui.flexs.AlignItems
 import dev.gemmabcr.views.ui.flexs.Gap
@@ -35,7 +34,7 @@ class ToDos(
     private val pokemonId: Int,
     private val toDos: List<ProgressToDo>,
     private val canEdit: Boolean,
-) : View {
+) : UiComponent {
     override fun create(content: FlowContent): FlowContent = content.apply {
         column(align = AlignItems.CENTER, style = "padding: 1rem;") {
             row(JustifyContent.CENTER, AlignItems.CENTER, Gap.MAX) {
@@ -64,10 +63,10 @@ class ToDos(
                 }
                 tbody {
                     tr {
-                        style = "background-color: ${Colors.BLUE_GREY}"
+                        style = "background-color: ${Colors.DARK_BLUE}"
                         listOf(CommonI18nKey.PROGRESS, CommonI18nKey.DESCRIPTION).forEach {
                             th {
-                                style = "color: ${Colors.DARKEST_BLUE}"
+                                style = "color: ${Colors.ON_DARK_BLUE}"
                                 +translate(it)
                             }
                         }
@@ -84,7 +83,9 @@ class ToDos(
 
     private fun TBODY.todoRow(toDo: ProgressToDo) {
         tr {
-            style = "background-color: ${if (toDo.completed()) Colors.CREAM_LIGHEST else Colors.WHITE}"
+            style =
+                "background-color: ${if (toDo.completed()) Colors.MEADOW else Colors.WHITE}; " +
+                        "color: ${Colors.DARKEST_BLUE};"
             td {
                 span {
                     readerClass()

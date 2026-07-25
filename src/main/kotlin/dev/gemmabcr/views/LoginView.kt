@@ -10,8 +10,8 @@ import dev.gemmabcr.security.SessionTokenService
 import dev.gemmabcr.security.SessionTokenService.Companion.SESSION_TOKEN_COOKIE
 import dev.gemmabcr.views.i18n.CommonI18nKey
 import dev.gemmabcr.views.i18n.I18nKey
-import dev.gemmabcr.views.pages.AuthMode
 import dev.gemmabcr.views.pages.LoginPage
+import dev.gemmabcr.views.ui.AuthMode
 import dev.gemmabcr.views.pages.ProfilePage
 import io.ktor.http.ContentType
 import io.ktor.http.CookieEncoding

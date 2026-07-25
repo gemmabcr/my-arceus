@@ -4,6 +4,7 @@ import dev.gemmabcr.views.ui.flexs.column
 import kotlinx.html.DIV
 import kotlinx.html.InputType
 import kotlinx.html.checkBoxInput
+import kotlinx.html.classes
 import kotlinx.html.input
 import kotlinx.html.label
 import kotlinx.html.onChange
@@ -40,9 +41,8 @@ fun DIV.selectInput(
         select {
             this.name = name
             this.onChange = onChange ?: ""
-            style =
-                "padding: 0.5rem; border: 1px solid #ddd; border-radius: 8px; " +
-                        "background-color: white; font-family: inherit; cursor: pointer; min-width: 150px;"
+            classes = setOf("ui-field")
+            style = "cursor: pointer; min-width: 150px;"
             options.forEach {
                 option {
                     selected = value == it.key
@@ -56,7 +56,7 @@ fun DIV.selectInput(
 
 private fun DIV.labelText(label: String) {
     label {
-        style = "font-size: 0.85rem; color: #666; margin-bottom: 0.2rem; font-weight: 500;"
+        classes = setOf("ui-label")
         +label
     }
 }
@@ -75,11 +75,7 @@ private fun DIV.input(label: String, name: String, type: InputType, value: Strin
         input(type = type, name = name) {
             this.value = value ?: ""
             this.onChange = onChange ?: ""
-            style =
-                "padding: 0.5rem; border: 1px solid #ddd; border-radius: 8px; " +
-                        "font-family: inherit; transition: border-color 0.2s;"
-            attributes["onfocus"] = "this.style.borderColor='${Colors.CREAM}'"
-            attributes["onblur"] = "this.style.borderColor='#ddd'"
+            classes = setOf("ui-field")
         }
     }
 }
