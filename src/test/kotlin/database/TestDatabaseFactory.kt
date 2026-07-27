@@ -2,6 +2,7 @@ package database
 
 import dev.gemmabcr.database.tables.LocationsTable
 import dev.gemmabcr.database.tables.PokemonsTable
+import dev.gemmabcr.database.tables.RequestAnalyticsTable
 import dev.gemmabcr.database.tables.ToDosTable
 import dev.gemmabcr.database.tables.UserTeamsTable
 import dev.gemmabcr.database.tables.UserToDosTable
@@ -17,6 +18,7 @@ object TestDatabaseFactory {
         transaction {
             SchemaUtils.create(
                 UsersTable,
+                RequestAnalyticsTable,
                 UserIdentitiesTable,
                 PokemonsTable,
                 LocationsTable,
@@ -32,6 +34,7 @@ object TestDatabaseFactory {
             SchemaUtils.drop(
                 UserToDosTable,
                 UserTeamsTable,
+                RequestAnalyticsTable,
                 UserIdentitiesTable,
                 UsersTable,
                 PokemonsTable,

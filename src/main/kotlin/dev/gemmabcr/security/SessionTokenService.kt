@@ -4,6 +4,7 @@ import dev.gemmabcr.models.AuthDao
 import dev.gemmabcr.models.Session
 import io.ktor.http.HttpHeaders
 import io.ktor.server.application.ApplicationCall
+import io.ktor.util.AttributeKey
 import java.security.MessageDigest
 import java.security.SecureRandom
 import java.util.Base64
@@ -16,9 +17,17 @@ class SessionTokenService(private val authDao: AuthDao) {
     }
 
     suspend fun session(call: ApplicationCall): Session {
-        val token = call.sessionToken() ?: return Session()
-        return Session(authDao.userBySessionTokenHash(hash(token)))
+        val cachedSession = call.attributes.getOrNull(SessionKey)
+        val resolvedSession = cachedSession ?: call.sessionToken()
+            ?.let { Session(authDao.userBySessionTokenHash(hash(it))) }
+            ?: Session()
+        if (cachedSession == null) call.rememberSession(resolvedSession)
+        return resolvedSession
     }
+
+    fun rememberUser(call: ApplicationCall, user: Int) = call.rememberSession(Session(user))
+
+    fun cachedUser(call: ApplicationCall): Int? = call.attributes.getOrNull(SessionKey)?.user
 
     suspend fun clear(call: ApplicationCall) {
         val token = call.sessionToken() ?: return
@@ -50,11 +59,16 @@ class SessionTokenService(private val authDao: AuthDao) {
             .digest(token.toByteArray(Charsets.UTF_8))
             .joinToString(separator = "") { "%02x".format(it) }
 
+    private fun ApplicationCall.rememberSession(session: Session) {
+        attributes.put(SessionKey, session)
+    }
+
     companion object {
         const val SESSION_TOKEN_COOKIE = "sessionToken"
         const val SESSION_TOKEN_HEADER = "X-Session-Token"
         private const val BEARER_PREFIX = "Bearer "
         private const val TOKEN_BYTES = 32
+        private val SessionKey = AttributeKey<Session>("UserSession")
         private val secureRandom = SecureRandom()
     }
 }

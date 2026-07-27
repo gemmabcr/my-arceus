@@ -2,11 +2,14 @@ package dev.gemmabcr
 
 import com.typesafe.config.ConfigFactory
 import dev.gemmabcr.Serialization.jsonConfig
+import dev.gemmabcr.analytics.RequestAnalyticsPlugin
+import dev.gemmabcr.analytics.RequestAnalyticsSettings
 import dev.gemmabcr.controllers.Controller
 import dev.gemmabcr.controllers.TodoProgressService
 import dev.gemmabcr.database.ExposedAuthDao
 import dev.gemmabcr.database.FlywayFactory
 import dev.gemmabcr.database.ExposedPokemonDao
+import dev.gemmabcr.database.ExposedRequestAnalyticsRepository
 import dev.gemmabcr.database.DatabaseFactory
 import dev.gemmabcr.database.ExposedUserDao
 import dev.gemmabcr.ocr.GameScreenshotOcrService
@@ -35,11 +38,19 @@ fun Application.module() {
     val authDao = ExposedAuthDao()
     val sessionTokenService = SessionTokenService(authDao)
     val oauthService = OAuthService(OAuthConfig.from(config))
+    val analyticsSettings = RequestAnalyticsSettings.from(config)
 
     install(ContentNegotiation) {
         json(jsonConfig)
     }
     installReverseProxySupport()
+    if (analyticsSettings.enabled) {
+        install(RequestAnalyticsPlugin) {
+            repository = ExposedRequestAnalyticsRepository()
+            retentionDays = analyticsSettings.retentionDays
+            userId = sessionTokenService::cachedUser
+        }
+    }
     PageFactory(
         Controller(
             pokemonDao,

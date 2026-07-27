@@ -226,6 +226,7 @@ class LoginView(
 
     private suspend fun ApplicationCall.respondAuthenticated(user: Int) {
         val token = sessionTokenService.create(user)
+        sessionTokenService.rememberUser(this, user)
         setSessionCookie(token)
         if (request.contentType().match(ContentType.Application.Json)) {
             respond(LoginResponse(token))
