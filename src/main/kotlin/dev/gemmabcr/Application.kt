@@ -19,6 +19,7 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.forwardedheaders.XForwardedHeaders
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain
@@ -38,6 +39,7 @@ fun Application.module() {
     install(ContentNegotiation) {
         json(jsonConfig)
     }
+    installReverseProxySupport()
     PageFactory(
         Controller(
             pokemonDao,
@@ -50,4 +52,8 @@ fun Application.module() {
         sessionTokenService,
         oauthService,
     ).create(this)
+}
+
+internal fun Application.installReverseProxySupport() {
+    install(XForwardedHeaders)
 }
