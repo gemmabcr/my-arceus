@@ -26,6 +26,7 @@ import kotlinx.html.h1 as htmlH1
 import kotlinx.html.h2 as htmlH2
 import kotlinx.html.img
 import kotlinx.html.link
+import kotlinx.html.meta
 import kotlinx.html.span
 import kotlinx.html.style
 import kotlinx.html.title
@@ -57,6 +58,10 @@ abstract class HtmlLayout(
     private fun HTML.pageHead() {
         head {
             title { +translate(CommonI18nKey.TITLE) }
+            meta {
+                name = "viewport"
+                content = "width=device-width, initial-scale=1"
+            }
             link(rel = "icon", href = "/icons/favicon.svg", type = "image/svg+xml")
             style {
                 unsafe {
