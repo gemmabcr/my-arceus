@@ -89,6 +89,12 @@ class AuthContent(
                     style = "margin: -0.35rem 0 0; color: ${Colors.DARK_BLUE}; font-size: 0.75rem;"
                     +translate(CommonI18nKey.PASSWORD_REQUIREMENTS)
                 }
+                p {
+                    classes = setOf("auth-privacy-notice")
+                    +translate(CommonI18nKey.PRIVACY_REGISTER_NOTICE)
+                    +" "
+                    a(href = "/privacy") { +translate(CommonI18nKey.PRIVACY_POLICY) }
+                }
             }
             button(type = ButtonType.submit) {
                 classes = setOf("ui-primary-button")

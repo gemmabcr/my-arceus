@@ -17,8 +17,10 @@ import kotlinx.html.HTML
 import kotlinx.html.a
 import kotlinx.html.body
 import kotlinx.html.button
+import kotlinx.html.classes
 import kotlinx.html.div
 import kotlinx.html.form
+import kotlinx.html.footer
 import kotlinx.html.head
 import kotlinx.html.h1 as htmlH1
 import kotlinx.html.h2 as htmlH2
@@ -46,7 +48,7 @@ abstract class HtmlLayout(
             attributes["data-active-menu"] = activeMenuItem.name.lowercase()
             header()
             mainContent()
-            footerImage()
+            pageFooter()
         }
     }
 
@@ -178,6 +180,59 @@ abstract class HtmlLayout(
                 background-color: ${Colors.BLUE_GREY} !important;
                 color: ${Colors.ON_DARK_BLUE} !important;
                 box-shadow: 0 1px 3px rgba(20, 45, 61, 0.18);
+            }
+            .auth-privacy-notice {
+                margin: -0.2rem 0 0;
+                color: ${Colors.DARK_BLUE};
+                font-size: 0.72rem;
+                line-height: 1.45;
+            }
+            .auth-privacy-notice a,
+            .page-footer-links a,
+            .privacy-content a {
+                color: ${Colors.DARK_BLUE};
+                font-weight: 700;
+            }
+            .privacy-content {
+                max-width: 780px;
+                margin: 0 auto;
+                padding: clamp(1.25rem, 4vw, 2.25rem);
+            }
+            .privacy-updated {
+                margin: 0;
+                color: ${Colors.DARK_BLUE};
+                font-size: 0.8rem;
+            }
+            .privacy-section {
+                padding-top: 1.25rem;
+            }
+            .privacy-section + .privacy-section {
+                margin-top: 1.25rem;
+                border-top: 1px solid ${Colors.BLUE_GREY};
+            }
+            .privacy-section h3 {
+                margin: 0 0 0.65rem;
+                color: ${Colors.DARKEST_BLUE};
+                font-size: 1.05rem;
+            }
+            .privacy-section p,
+            .privacy-section li {
+                color: ${Colors.DARK_BLUE};
+                font-size: 0.88rem;
+                line-height: 1.65;
+            }
+            .privacy-section p { margin: 0.55rem 0 0; }
+            .privacy-section ul { margin: 0; padding-left: 1.2rem; }
+            .page-footer-links {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 0.65rem;
+                max-width: 980px;
+                margin: 3rem auto 0;
+                padding: 1rem;
+                color: ${Colors.DARK_BLUE};
+                font-size: 0.8rem;
             }
         """.trimIndent()
 
@@ -490,12 +545,20 @@ abstract class HtmlLayout(
         }
     }
 
-    private fun FlowContent.footerImage() {
-        img(
-            translate(CommonI18nKey.ALT_IMG),
-            ImageSource.FOOTER.url,
-        ) {
-            style = "margin-top: 4rem; max-height: 800px; object-fit: cover; width: 100%;"
+    private fun FlowContent.pageFooter() {
+        footer {
+            div {
+                classes = setOf("page-footer-links")
+                a(href = "/privacy") { +translate(CommonI18nKey.PRIVACY_POLICY) }
+                span { +"·" }
+                a(href = "mailto:$PRIVACY_EMAIL") { +PRIVACY_EMAIL }
+            }
+            img(
+                translate(CommonI18nKey.ALT_IMG),
+                ImageSource.FOOTER.url,
+            ) {
+                style = "max-height: 800px; object-fit: cover; width: 100%;"
+            }
         }
     }
 
@@ -555,7 +618,7 @@ abstract class HtmlLayout(
 
 }
 
-enum class MenuItem { LOGIN, MY_TEAM, OCR, POKEDEX, PROFILE }
+enum class MenuItem { LOGIN, MY_TEAM, OCR, POKEDEX, PRIVACY, PROFILE }
 
 private fun DIV.menuItem(
     href: String,

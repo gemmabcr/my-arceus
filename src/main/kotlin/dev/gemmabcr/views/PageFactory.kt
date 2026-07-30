@@ -37,6 +37,7 @@ class PageFactory(
             }
             val views = listOf(
                 LoginView(authDao, sessionTokenService, oauthService),
+                PrivacyView(sessionTokenService),
                 PokemonsView(controller, todoProgressService, sessionTokenService),
                 TeamView(controller, sessionTokenService),
                 OcrView(ocrService, ocrTodoImportService, sessionTokenService),
