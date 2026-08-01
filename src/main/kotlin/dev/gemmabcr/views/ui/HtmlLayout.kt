@@ -78,6 +78,7 @@ abstract class HtmlLayout(
                                 th, td { border: 1px solid ${Colors.BLUE_GREY}; padding: 8px; text-align: left; }
                                 a { color: inherit; }
                                 $sharedComponentStyles
+                                $privacyStyles
                                 $pokemonListStyles
                                 $ocrStyles
                                 @media (max-width: 680px) {
@@ -193,41 +194,10 @@ abstract class HtmlLayout(
                 line-height: 1.45;
             }
             .auth-privacy-notice a,
-            .page-footer-links a,
-            .privacy-content a {
+            .page-footer-links a {
                 color: ${Colors.DARK_BLUE};
                 font-weight: 700;
             }
-            .privacy-content {
-                max-width: 780px;
-                margin: 0 auto;
-                padding: clamp(1.25rem, 4vw, 2.25rem);
-            }
-            .privacy-updated {
-                margin: 0;
-                color: ${Colors.DARK_BLUE};
-                font-size: 0.8rem;
-            }
-            .privacy-section {
-                padding-top: 1.25rem;
-            }
-            .privacy-section + .privacy-section {
-                margin-top: 1.25rem;
-                border-top: 1px solid ${Colors.BLUE_GREY};
-            }
-            .privacy-section h3 {
-                margin: 0 0 0.65rem;
-                color: ${Colors.DARKEST_BLUE};
-                font-size: 1.05rem;
-            }
-            .privacy-section p,
-            .privacy-section li {
-                color: ${Colors.DARK_BLUE};
-                font-size: 0.88rem;
-                line-height: 1.65;
-            }
-            .privacy-section p { margin: 0.55rem 0 0; }
-            .privacy-section ul { margin: 0; padding-left: 1.2rem; }
             .page-footer-links {
                 display: flex;
                 justify-content: center;
