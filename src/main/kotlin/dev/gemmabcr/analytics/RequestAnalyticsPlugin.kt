@@ -25,6 +25,7 @@ val RequestAnalyticsPlugin = createApplicationPlugin(
     val repository = pluginConfig.repository
     val retentionDays = pluginConfig.retentionDays
     val resolveUserId = pluginConfig.userId
+    val exclude = pluginConfig.exclude
     val lastCleanup = AtomicLong(0)
 
     require(retentionDays > 0) { "Analytics retention must be greater than zero days." }
@@ -34,6 +35,7 @@ val RequestAnalyticsPlugin = createApplicationPlugin(
     }
 
     on(ResponseSent) { call ->
+        if (exclude(call)) return@on
         val now = OffsetDateTime.now(ZoneOffset.UTC)
         val event = call.toAnalyticsEvent(now, resolveUserId(call))
         application.launch {

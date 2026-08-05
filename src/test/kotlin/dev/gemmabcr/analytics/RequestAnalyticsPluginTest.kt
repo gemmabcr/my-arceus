@@ -7,6 +7,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.config.MapApplicationConfig
+import io.ktor.server.request.host
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
@@ -50,6 +51,27 @@ class RequestAnalyticsPluginTest {
         assertEquals(TEST_USER_ID, event.userId)
         assertEquals("https://example.com/source", event.referrer)
         assertFalse(event.referrer.orEmpty().contains("secret"))
+    }
+
+    @Test
+    fun givenExcludedHost_whenResponseIsSent_thenDoesNotStoreAnalytics() = testApplication {
+        val repository = RecordingRepository()
+        environment { config = MapApplicationConfig() }
+        application {
+            install(RequestAnalyticsPlugin) {
+                this.repository = repository
+                exclude = { call -> call.request.host() == "localhost" }
+            }
+            routing {
+                get("/pokemons") { call.respondText("ok") }
+            }
+        }
+
+        client.get("/pokemons") {
+            header(HttpHeaders.Host, "localhost")
+        }
+
+        assertFalse(repository.recorded.isCompleted)
     }
 }
 

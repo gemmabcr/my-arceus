@@ -6,6 +6,7 @@ class RequestAnalyticsPluginConfig {
     lateinit var repository: RequestAnalyticsRepository
     var retentionDays: Long = DEFAULT_RETENTION_DAYS
     var userId: (ApplicationCall) -> Int? = { null }
+    var exclude: (ApplicationCall) -> Boolean = { false }
 }
 
 private const val DEFAULT_RETENTION_DAYS = 30L

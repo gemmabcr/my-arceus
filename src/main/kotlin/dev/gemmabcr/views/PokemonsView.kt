@@ -40,7 +40,11 @@ class PokemonsView(
                     call.respondHtmlTemplate(ListView(criteria, result, todos, team, call.request.uri, session)) {}
                 }
                 get("/{id}") {
-                    val id = call.parameters["id"]!!.toInt()
+                    val id = call.parameters["id"]?.toIntOrNull()
+                    if (id == null) {
+                        call.respond(HttpStatusCode.NotFound)
+                        return@get
+                    }
                     val session = call.createSession(sessionTokenService)
                     val pokemon = controller.pokemon(id, session)
                     call.applyLocale()
@@ -52,7 +56,11 @@ class PokemonsView(
                         call.respond(HttpStatusCode.Unauthorized)
                         return@post
                     }
-                    val id = call.parameters["id"]!!.toInt()
+                    val id = call.parameters["id"]?.toIntOrNull()
+                    if (id == null) {
+                        call.respond(HttpStatusCode.NotFound)
+                        return@post
+                    }
                     val parameters = call.receiveParameters()
                     val updates = parameters.names()
                         .filter { it.startsWith(TODO_PROGRESS_PREFIX) }

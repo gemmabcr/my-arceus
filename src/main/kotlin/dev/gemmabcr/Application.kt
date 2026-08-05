@@ -17,12 +17,15 @@ import dev.gemmabcr.ocr.OcrTodoImportService
 import dev.gemmabcr.security.SessionTokenService
 import dev.gemmabcr.security.OAuthConfig
 import dev.gemmabcr.security.OAuthService
+import dev.gemmabcr.security.RequestRateLimitSettings
+import dev.gemmabcr.security.installRequestRateLimit
 import dev.gemmabcr.views.PageFactory
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.forwardedheaders.XForwardedHeaders
+import io.ktor.server.request.host
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain
@@ -39,16 +42,19 @@ fun Application.module() {
     val sessionTokenService = SessionTokenService(authDao)
     val oauthService = OAuthService(OAuthConfig.from(config))
     val analyticsSettings = RequestAnalyticsSettings.from(config)
+    val rateLimitSettings = RequestRateLimitSettings.from(config)
 
     install(ContentNegotiation) {
         json(jsonConfig)
     }
     installReverseProxySupport()
+    installRequestRateLimit(rateLimitSettings)
     if (analyticsSettings.enabled) {
         install(RequestAnalyticsPlugin) {
             repository = ExposedRequestAnalyticsRepository()
             retentionDays = analyticsSettings.retentionDays
             userId = sessionTokenService::cachedUser
+            exclude = { call -> call.request.host().equals("localhost", ignoreCase = true) }
         }
     }
     PageFactory(
