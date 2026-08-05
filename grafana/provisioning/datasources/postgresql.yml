@@ -1,0 +1,22 @@
+apiVersion: 1
+
+datasources:
+  - name: My Arceus PostgreSQL
+    uid: my-arceus-postgresql
+    type: postgres
+    access: proxy
+    url: $__env{DB_HOST}:$__env{DB_PORT}
+    user: $__env{GRAFANA_DB_USER}
+    isDefault: true
+    editable: false
+    jsonData:
+      database: $__env{DB_NAME}
+      sslmode: require
+      postgresVersion: 1000
+      timescaledb: false
+      maxOpenConns: 5
+      maxIdleConns: 2
+      maxIdleConnsAuto: false
+      connMaxLifetime: 14400
+    secureJsonData:
+      password: $__env{GRAFANA_DB_PASSWORD}

@@ -6,3 +6,8 @@ my-arceus.com {
 www.my-arceus.com {
     redir https://my-arceus.com{uri} permanent
 }
+
+grafana.my-arceus.com {
+    encode zstd gzip
+    reverse_proxy grafana:3000
+}

@@ -1,0 +1,12 @@
+apiVersion: 1
+
+providers:
+  - name: My Arceus
+    orgId: 1
+    folder: My Arceus
+    type: file
+    disableDeletion: true
+    editable: true
+    updateIntervalSeconds: 30
+    options:
+      path: /var/lib/grafana/dashboards

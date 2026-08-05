@@ -1,0 +1,80 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "my-arceus-postgresql" },
+      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] } }, "overrides": [] },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "id": 1,
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto", "wideLayout": true },
+      "targets": [{ "datasource": { "type": "grafana-postgresql-datasource", "uid": "my-arceus-postgresql" }, "editorMode": "code", "format": "table", "rawQuery": true, "rawSql": "SELECT COUNT(*) AS requests FROM request_analytics WHERE $__timeFilter(occurred_at);", "refId": "A" }],
+      "title": "Peticions",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "my-arceus-postgresql" },
+      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] } }, "overrides": [] },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "id": 2,
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto", "wideLayout": true },
+      "targets": [{ "datasource": { "type": "grafana-postgresql-datasource", "uid": "my-arceus-postgresql" }, "editorMode": "code", "format": "table", "rawQuery": true, "rawSql": "SELECT COUNT(DISTINCT ip_address) AS visitors FROM request_analytics WHERE $__timeFilter(occurred_at);", "refId": "A" }],
+      "title": "Visitants únics",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "my-arceus-postgresql" },
+      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 1 }] } }, "overrides": [] },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "id": 3,
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto", "wideLayout": true },
+      "targets": [{ "datasource": { "type": "grafana-postgresql-datasource", "uid": "my-arceus-postgresql" }, "editorMode": "code", "format": "table", "rawQuery": true, "rawSql": "SELECT COUNT(*) AS errors FROM request_analytics WHERE $__timeFilter(occurred_at) AND status_code >= 500;", "refId": "A" }],
+      "title": "Errors 5xx",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "my-arceus-postgresql" },
+      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" }, "decimals": 1, "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "yellow", "value": 500 }, { "color": "red", "value": 1000 }] }, "unit": "ms" }, "overrides": [] },
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "id": 4,
+      "options": { "colorMode": "value", "graphMode": "area", "justifyMode": "auto", "orientation": "auto", "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }, "textMode": "auto", "wideLayout": true },
+      "targets": [{ "datasource": { "type": "grafana-postgresql-datasource", "uid": "my-arceus-postgresql" }, "editorMode": "code", "format": "table", "rawQuery": true, "rawSql": "SELECT AVG(duration_ms) AS duration FROM request_analytics WHERE $__timeFilter(occurred_at);", "refId": "A" }],
+      "title": "Durada mitjana",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "my-arceus-postgresql" },
+      "fieldConfig": { "defaults": { "color": { "mode": "palette-classic" }, "custom": { "axisCenteredZero": false, "axisColorMode": "text", "axisLabel": "", "axisPlacement": "auto", "drawStyle": "line", "fillOpacity": 20, "gradientMode": "none", "hideFrom": { "legend": false, "tooltip": false, "viz": false }, "lineInterpolation": "smooth", "lineWidth": 2, "pointSize": 5, "scaleDistribution": { "type": "linear" }, "showPoints": "never", "spanNulls": false, "stacking": { "group": "A", "mode": "none" }, "thresholdsStyle": { "mode": "off" } } }, "overrides": [] },
+      "gridPos": { "h": 9, "w": 16, "x": 0, "y": 4 },
+      "id": 5,
+      "options": { "legend": { "calcs": [], "displayMode": "list", "placement": "bottom", "showLegend": true }, "tooltip": { "hideZeros": false, "mode": "single", "sort": "none" } },
+      "targets": [{ "datasource": { "type": "grafana-postgresql-datasource", "uid": "my-arceus-postgresql" }, "editorMode": "code", "format": "time_series", "rawQuery": true, "rawSql": "SELECT $__timeGroupAlias(occurred_at, '1h'), COUNT(*) AS requests FROM request_analytics WHERE $__timeFilter(occurred_at) GROUP BY 1 ORDER BY 1;", "refId": "A" }],
+      "title": "Peticions per hora",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "grafana-postgresql-datasource", "uid": "my-arceus-postgresql" },
+      "fieldConfig": { "defaults": { "custom": { "align": "auto", "cellOptions": { "type": "auto" }, "inspect": false }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] } }, "overrides": [] },
+      "gridPos": { "h": 9, "w": 8, "x": 16, "y": 4 },
+      "id": 6,
+      "options": { "cellHeight": "sm", "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false }, "showHeader": true },
+      "targets": [{ "datasource": { "type": "grafana-postgresql-datasource", "uid": "my-arceus-postgresql" }, "editorMode": "code", "format": "table", "rawQuery": true, "rawSql": "SELECT path, COUNT(*) AS requests FROM request_analytics WHERE $__timeFilter(occurred_at) GROUP BY path ORDER BY requests DESC LIMIT 15;", "refId": "A" }],
+      "title": "Pàgines més visitades",
+      "type": "table"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 41,
+  "tags": ["my-arceus", "analytics"],
+  "templating": { "list": [] },
+  "time": { "from": "now-24h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Ús de My Arceus",
+  "uid": "my-arceus-web-usage",
+  "version": 1
+}
